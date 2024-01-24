@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { getContent } from './services/firebaseConfig.service';
+import { getContent } from './services/firebaseFirestore.service';
+import { HeaderComponent } from './components/header/header.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, FooterComponent],
 })
 export class AppComponent implements OnInit {
   title = 'Chat App';
