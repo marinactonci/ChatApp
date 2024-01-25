@@ -1,1 +1,27 @@
-<p>sidebar works!</p>
+<div class="container">
+    <div class="chat-list">
+        <div class="input-container">
+            <input class="users-input" placeholder="Search users..." nz-input [(ngModel)]="inputValue"
+                (input)="onInput($event)" [nzAutocomplete]="auto" />
+            <nz-autocomplete [nzDataSource]="users" nzBackfill #auto></nz-autocomplete>
+        </div>
+
+       <div class="users-list">
+        <nz-list nzItemLayout="horizontal">
+            @for (item of data; track $index) {
+                <nz-list-item>
+                    <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png">
+                        <nz-list-item-meta-title>
+                            <a class="friend-name">{{ item.name }}</a>
+                        </nz-list-item-meta-title>
+                    </nz-list-item-meta>
+                </nz-list-item>
+            }
+            @if (data.length === 0) {
+                <nz-list-empty></nz-list-empty>
+            }
+        </nz-list>
+       </div>
+    </div>
+</div>
+
