@@ -1,23 +1,31 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { getContent } from './services/firebaseFirestore.service';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { FooterComponent } from './components/footer/footer.component';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputDirective } from 'ng-zorro-antd/input';
+import {getContent} from "./services/firebaseFirestore.service";
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    HeaderComponent,
+    SidebarComponent,
+    NzButtonModule,
+    NzInputDirective,
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  imports: [RouterOutlet, HeaderComponent, SidebarComponent, FooterComponent],
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  title = 'Chat App';
-  docData: any;
+  isCollapsed = false;
 
   async ngOnInit() {
-    this.docData = await getContent();
-    console.log(this.docData);
+    const response = await getContent()
+    console.log(response);
   }
 }
