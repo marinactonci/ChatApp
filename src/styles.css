@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+button[type="submit"] {
+  background-color: #1890ff;
+}
+
+.ant-message-custom-content svg {
+  vertical-align: baseline;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-

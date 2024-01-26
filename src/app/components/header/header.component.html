@@ -1,4 +1,4 @@
-<header class="flex justify-between items-center px-8 py-4 border-b">
+<header class="flex justify-between items-center px-8 h-[7vh] border-b">
   <div class="flex items-center gap-1">
     <button nz-button nzType="text" (click)="open()">
       <svg
@@ -31,7 +31,22 @@
         <p>Some contents...</p>
       </ng-container>
     </nz-drawer>
-    <span class="font-bold">ChatApp</span>
+    <span class="font-bold text-2xl">ChatApp</span>
   </div>
-  <span nz-icon nzType="user" nzTheme="outline"></span>
+  @if(!isLoggedIn) {
+    <a href="/login">
+      <button nz-button nzType="primary" nzSize="large">Login</button>
+    </a>
+  }
+  @else {
+    <button nz-button nzType="text" class="overflow-hidden" nzShape="circle" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+      <span nz-icon nzType="user" nzTheme="outline" class="text-3xl"></span>
+    </button>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item>{{ user.displayName }}</li>
+        <li nz-menu-item (click)="handleLogout()">Sign-out</li>
+      </ul>
+    </nz-dropdown-menu>
+  }
 </header>

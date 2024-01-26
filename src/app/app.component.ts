@@ -5,7 +5,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputDirective } from 'ng-zorro-antd/input';
-import {getContent} from "./services/firebaseFirestore.service";
+import { getContent } from "./services/firebaseFirestore.service";
 
 @Component({
   selector: 'app-root',
