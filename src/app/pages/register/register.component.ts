@@ -35,7 +35,7 @@ export class RegisterComponent implements OnInit {
   message = inject(NzMessageService);
 
   async ngOnInit() {
-    const listener = onAuthStateChanged(this.authService.auth, (user) => {
+    onAuthStateChanged(this.authService.auth, (user) => {
       this.isDisabled = !!user;
     });
   }
