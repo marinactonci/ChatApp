@@ -3,7 +3,7 @@ import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { FormsModule } from '@angular/forms';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { getUserFriends, getUsers } from '../../services/firebaseFirestore.service';
+import { FirestoreService } from '../../services/firebaseFirestore.service';
 import { DocumentData } from 'firebase/firestore';
 import { AuthService } from '../../services/firebaseAuth.service';
 
@@ -12,10 +12,11 @@ import { AuthService } from '../../services/firebaseAuth.service';
   standalone: true,
   imports: [NzAutocompleteModule, FormsModule, NzListModule, NzInputModule],
   templateUrl: './sidebar.component.html',
-  providers: [AuthService]
+  providers: [AuthService, FirestoreService]
 })
 export class SidebarComponent implements OnInit {
   authService: AuthService = inject(AuthService);
+  firestoreService: FirestoreService = inject(FirestoreService);
 
   inputValue?: string;
   users: DocumentData[] = [];
@@ -27,7 +28,7 @@ export class SidebarComponent implements OnInit {
 
   async loadUsers() {
     try {
-      this.users = await getUsers();
+      this.users = await this.firestoreService.getUsers();
       this.filteredUsers = this.users;
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -45,7 +46,7 @@ export class SidebarComponent implements OnInit {
       const user = this.authService.auth.currentUser;
       if (user) {
         const userId = user.uid;
-        const friends = await getUserFriends(userId);
+        const friends = await this.firestoreService.getUserFriends(userId);
         
         this.filteredUsers = this.users.filter(user =>
           friends.includes(user['uid'])
