@@ -1,19 +1,23 @@
 import { app } from './firebaseConfig.service';
-import { getFirestore, collection, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs } from 'firebase/firestore';
 
 const db = getFirestore(app);
 const messagesRef = collection(db, 'messages');
+const usersRef = collection(db, 'users');
 
-// get document from collection and save it as a readable reference
-export const getContent = async () => {
-  const docRef = doc(messagesRef, 'message1');
-  const docSnap = await getDoc(docRef);
+export const getUsers = async () => {
+  const usersSnapshot = await getDocs(usersRef);
+  return usersSnapshot.docs.map(doc => doc.data());
+};
 
-  if (docSnap.exists()) {
-    return docSnap.data();
+export const getUserFriends = async (userId: any) => {
+  const userDocRef = doc(usersRef, userId);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (userDocSnap.exists()) {
+    return userDocSnap.data()['friends'] || [];
   } else {
-    // doc.data() will be undefined in this case
-    console.error('No such document!');
-    return null;
+    console.error('User not found!');
+    return [];
   }
 };

@@ -1,23 +1,21 @@
 <div class="flex h-[97vh]">
     <div class="w-1/3 border-r">
         <div class="p-5">
-            <input class="mt-2.5 border" placeholder="Search users..." nz-input [(ngModel)]="inputValue"
-                (input)="onInput($event)" [nzAutocomplete]="auto" />
-            <nz-autocomplete [nzDataSource]="users" nzBackfill #auto></nz-autocomplete>
+            <input class="mt-2.5 border" placeholder="Search users..." nz-input [(ngModel)]="inputValue" (input)="filterUsers()" />
         </div>
 
        <div class="p-5">
         <nz-list nzItemLayout="horizontal">
-            @for (item of data; track $index) {
+            @for (item of filteredUsers; track $index) {
                 <nz-list-item>
                     <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png">
                         <nz-list-item-meta-title>
-                            <a class="text-lg mb-1.5">{{ item.name }}</a>
+                            <a class="text-lg mb-1.5">{{ item['displayName'] }}</a>
                         </nz-list-item-meta-title>
                     </nz-list-item-meta>
                 </nz-list-item>
             }
-            @if (data.length === 0) {
+            @if (users.length === 0) {
                 <nz-list-empty></nz-list-empty>
             }
         </nz-list>
