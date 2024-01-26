@@ -1,19 +1,33 @@
-import { app } from './firebaseConfig.service';
-import { getFirestore, collection, doc, getDoc } from 'firebase/firestore';
+import { app } from "./firebaseConfig.service";
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 
-const db = getFirestore(app);
-const messagesRef = collection(db, 'messages');
+export class FirestoreService {
+  db = getFirestore(app);
+  usersCollection = collection(this.db, "users");
+  chatRoomsCollection = collection(this.db, "chatRooms");
 
-// get document from collection and save it as a readable reference
-export const getContent = async () => {
-  const docRef = doc(messagesRef, 'message1');
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    return docSnap.data();
-  } else {
-    // doc.data() will be undefined in this case
-    console.error('No such document!');
-    return null;
+  async addToUserCollection(user: any) {
+    const docRef = doc(this.usersCollection, user.uid);
+    const newUser= {
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: '/assets/default-profile.png',
+      friends: [],
+      friendRequests: []
+    }
+    await setDoc(docRef, newUser);
   }
-};
+
+  async getNotifications(userId: string) {
+    const docRef = doc(this.usersCollection, userId);
+    const docSnap = await getDoc(docRef);
+    // @ts-ignore
+    return docSnap.data().friendRequests;
+  }
+}

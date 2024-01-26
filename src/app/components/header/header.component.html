@@ -1,52 +1,78 @@
-<header class="flex justify-between items-center px-8 h-[7vh] border-b">
-  <div class="flex items-center gap-1">
-    <button nz-button nzType="text" (click)="open()">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="h-6 w-6"
-      >
-        <path d="M17 6.1H3"></path>
-        <path d="M21 12.1H3"></path>
-        <path d="M15.1 18H3"></path>
-      </svg>
-    </button>
-    <nz-drawer
-      [nzClosable]="false"
-      [nzVisible]="visible"
-      nzPlacement="right"
-      nzTitle="Basic Drawer"
-      (nzOnClose)="close()"
-    >
-      <ng-container *nzDrawerContent>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-      </ng-container>
-    </nz-drawer>
-    <span class="font-bold text-2xl">ChatApp</span>
-  </div>
-  @if(!isLoggedIn) {
+<header class="flex h-[7vh] items-center justify-between border-b px-8">
+    <div class="flex items-center gap-1">
+        <span
+            class="text-2xl font-bold transition-colors hover:cursor-pointer hover:text-gray-600"
+            >ChatApp</span
+        >
+    </div>
+    @if(!isLoggedIn) {
     <a href="/login">
-      <button nz-button nzType="primary" nzSize="large">Login</button>
+        <button nz-button nzType="primary" nzSize="large">Login</button>
     </a>
-  }
-  @else {
-    <button nz-button nzType="text" class="overflow-hidden" nzShape="circle" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
-      <span nz-icon nzType="user" nzTheme="outline" class="text-3xl"></span>
-    </button>
-    <nz-dropdown-menu #menu="nzDropdownMenu">
-      <ul nz-menu>
-        <li nz-menu-item>{{ user.displayName }}</li>
-        <li nz-menu-item (click)="handleLogout()">Sign-out</li>
-      </ul>
-    </nz-dropdown-menu>
-  }
+    } @else {
+      <div class="flex items-center gap-12">
+        <nz-badge [nzCount]="notifications.length" nzSize="small" [nzOffset]="[-6, 6]">
+          <button
+            nz-button
+            nzType="text"
+            class="overflow-hidden"
+            nz-dropdown
+            [nzPlacement]="'bottomRight'"
+            [nzDropdownMenu]="notifs"
+            nzTrigger="click">
+            <span nz-icon nzType="bell" nzTheme="outline" class="text-xl"></span>
+          </button>
+        </nz-badge>
+        <nz-dropdown-menu #notifs="nzDropdownMenu">
+          <ul nz-menu>
+            @if(notifications.length > 0) {
+              @for(notification of notifications; track $index) {
+                <li nz-menu-item>
+                  <div class="flex justify-between items-center">
+                    <div>
+                      {{notification.from}} has sent you a friend request
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <button>A</button>
+                      <button>D</button>
+                    </div>
+                  </div>
+                </li>
+              }
+            } @else {
+              <nz-empty [nzNotFoundContent]="contentTpl"></nz-empty>
+              <ng-template #contentTpl>
+              <span>
+                No notifications
+              </span>
+              </ng-template>
+            }
+          </ul>
+        </nz-dropdown-menu>
+        <img
+          src="{{ user.photoURL ? user.photoURL : 'assets/default-profile.jpeg' }}"
+          alt="user"
+          class="w-10 h-10 rounded-full hover:cursor-pointer"
+          nz-dropdown
+          [nzDropdownMenu]="menu"
+          nzTrigger="click"
+        />
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <li nz-menu-item >
+              <div class="flex items-center gap-2">
+                <span nz-icon nzType="user" nzTheme="outline"></span>
+                <span>{{ user.displayName }}</span>
+              </div>
+            </li>
+            <li nz-menu-item (click)="handleLogout()">
+              <div class="flex items-center gap-2">
+                <span nz-icon nzType="logout" nzTheme="outline"></span>
+                <span>Sign-out</span>
+              </div>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </div>
+    }
 </header>
