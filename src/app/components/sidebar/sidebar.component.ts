@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { FormsModule } from '@angular/forms';
 import { NzListModule } from 'ng-zorro-antd/list';
+import { NzInputModule} from "ng-zorro-antd/input";
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [NzAutocompleteModule, FormsModule, NzListModule],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  imports: [NzAutocompleteModule, FormsModule, NzListModule, NzInputModule],
+  templateUrl: './sidebar.component.html'
 })
 export class SidebarComponent {
   inputValue?: string;

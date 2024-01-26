@@ -1,18 +1,18 @@
-<div class="container">
-    <div class="chat-list">
-        <div class="input-container">
-            <input class="users-input" placeholder="Search users..." nz-input [(ngModel)]="inputValue"
+<div class="flex h-[97vh]">
+    <div class="w-1/3 border-r">
+        <div class="p-5">
+            <input class="mt-2.5 border" placeholder="Search users..." nz-input [(ngModel)]="inputValue"
                 (input)="onInput($event)" [nzAutocomplete]="auto" />
             <nz-autocomplete [nzDataSource]="users" nzBackfill #auto></nz-autocomplete>
         </div>
 
-       <div class="users-list">
+       <div class="p-5">
         <nz-list nzItemLayout="horizontal">
             @for (item of data; track $index) {
                 <nz-list-item>
                     <nz-list-item-meta nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png">
                         <nz-list-item-meta-title>
-                            <a class="friend-name">{{ item.name }}</a>
+                            <a class="text-lg mb-1.5">{{ item.name }}</a>
                         </nz-list-item-meta-title>
                     </nz-list-item-meta>
                 </nz-list-item>
