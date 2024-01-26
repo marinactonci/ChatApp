@@ -1,23 +1,27 @@
 import { app } from './firebaseConfig.service';
 import { getFirestore, collection, doc, getDoc, getDocs } from 'firebase/firestore';
 
-const db = getFirestore(app);
-const messagesRef = collection(db, 'messages');
-const usersRef = collection(db, 'users');
+export class FirestoreService {
+  db = getFirestore(app);
+  usersCollection = collection(this.db, "users");
+  chatRoomsCollection = collection(this.db, "chatRooms");
 
-export const getUsers = async () => {
-  const usersSnapshot = await getDocs(usersRef);
-  return usersSnapshot.docs.map(doc => doc.data());
-};
-
-export const getUserFriends = async (userId: any) => {
-  const userDocRef = doc(usersRef, userId);
-  const userDocSnap = await getDoc(userDocRef);
-
-  if (userDocSnap.exists()) {
-    return userDocSnap.data()['friends'] || [];
-  } else {
-    console.error('User not found!');
-    return [];
+  async addToUserCollection(user: any) {
+    const docRef = doc(this.usersCollection, user.uid);
+    const newUser= {
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: '/assets/default-profile.png',
+      friends: [],
+      friendRequests: []
+    }
+    await setDoc(docRef, newUser);
   }
-};
+
+  async getNotifications(userId: string) {
+    const docRef = doc(this.usersCollection, userId);
+    const docSnap = await getDoc(docRef);
+    // @ts-ignore
+    return docSnap.data().friendRequests;
+  }
+}

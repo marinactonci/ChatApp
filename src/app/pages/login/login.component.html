@@ -1,95 +1,105 @@
-<section class="container mx-auto py-20 min-h-[93vh] grid place-items-center">
-  <div class="w-full max-w-md p-8 space-y-4 bg-white shadow-md rounded-sm">
-    <h2 class="text-2xl font-semibold text-center text-gray-700">
-      Log in to your account
-    </h2>
-    <div class="grid grid-cols-2 gap-4 my-4">
-      <button
-        class="flex items-center justify-center space-x-2 h-12 border border-black rounded-sm hover:bg-gray-50 transition-colors"
-        (click)="handleGoogleLogin()"
-      >
-        <img src="assets/google.svg" alt="" />
-        <span>Google</span>
-      </button>
-      <button
-        class="flex items-center justify-center space-x-2 h-12 bg-black text-white rounded-sm hover:bg-slate-900 transition-colors"
-        (click)="handleGithubLogin()"
-      >
-        <span nz-icon nzType="github" nzTheme="outline"></span>
-        <span>Github</span>
-      </button>
-    </div>
-    <div class="relative my-2">
-      <div aria-hidden="true"
-           class="absolute inset-0 flex items-center">
-        <div class="w-full border-t border-gray-300" ></div>
-      </div>
-      <div class="relative flex justify-center text-sm">
-        <span class="px-2 bg-white text-gray-500">
-          Or continue with your email
-        </span>
-      </div>
-    </div>
-    <form class="space-y-6">
-      <div>
-        <label class="text-sm font-medium text-gray-700">
-          Email Address
-        </label>
-        <input type="email"
-               nz-input placeholder="Enter email..."
-               name="email"
-               [(ngModel)]="email"/>
-      </div>
-      <div>
-        <label class="text-sm font-medium text-gray-700">
-          Password
-        </label>
-        <nz-input-group [nzSuffix]="suffixTemplate">
-          <input
-            [type]="passwordVisible ? 'text' : 'password'"
-            nz-input
-            placeholder="Enter password..."
-            name="password"
-            [(ngModel)]="password"
-          />
-        </nz-input-group>
-        <ng-template #suffixTemplate>
-          <span
-            nz-icon
-            [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-            (click)="passwordVisible = !passwordVisible"
-          ></span>
-        </ng-template>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <label nz-checkbox [(ngModel)]="rememberMe" name="remember-me">Remember me</label>
+<section class="container mx-auto grid min-h-[93vh] place-items-center py-20">
+    <div class="w-full max-w-md space-y-4 rounded-sm bg-white p-8 shadow-md">
+        <h2 class="text-center text-2xl font-semibold text-gray-700">
+            Log in to your account
+        </h2>
+        <div class="my-4 grid grid-cols-2 gap-4">
+            <button
+                class="flex h-12 items-center justify-center space-x-2 rounded-sm border border-black transition-colors hover:bg-gray-50"
+                (click)="handleGoogleLogin()"
+            >
+                <img src="assets/google.svg" alt="" />
+                <span>Google</span>
+            </button>
+            <button
+                class="flex h-12 items-center justify-center space-x-2 rounded-sm bg-black text-white transition-colors hover:bg-slate-900"
+                (click)="handleGithubLogin()"
+            >
+                <span nz-icon nzType="github" nzTheme="outline"></span>
+                <span>Github</span>
+            </button>
         </div>
-        <div>
-          <a class="text-sm font-medium text-gray-600 hover:underline"
-             href="#">
-            Forgot your password?
-          </a>
+        <div class="relative my-2">
+            <div aria-hidden="true" class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="bg-white px-2 text-gray-500">
+                    Or continue with your email
+                </span>
+            </div>
         </div>
-      </div>
-      <button
-        nz-button
-        nzType="primary"
-        class="w-full"
-        type="submit"
-        (click)="handleLogin()"
-        [disabled]="isDisabled">
-        Log In
-      </button>
-    </form>
-    <div class="flex items-center justify-center">
-      <span class="text-sm text-gray-600">
-        Don't have an account?
-      </span>
-      <a class="ml-1 text-sm font-medium text-gray-600 hover:underline"
-         href="/register">
-        Sign Up
-      </a>
+        <form class="space-y-6">
+            <div>
+                <label class="text-sm font-medium text-gray-700">
+                    Email Address
+                </label>
+                <input
+                    type="email"
+                    nz-input
+                    placeholder="Enter email..."
+                    name="email"
+                    [(ngModel)]="email"
+                />
+            </div>
+            <div>
+                <label class="text-sm font-medium text-gray-700">
+                    Password
+                </label>
+                <nz-input-group [nzSuffix]="suffixTemplate">
+                    <input
+                        [type]="passwordVisible ? 'text' : 'password'"
+                        nz-input
+                        placeholder="Enter password..."
+                        name="password"
+                        [(ngModel)]="password"
+                    />
+                </nz-input-group>
+                <ng-template #suffixTemplate>
+                    <span
+                        nz-icon
+                        [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                        (click)="passwordVisible = !passwordVisible"
+                    ></span>
+                </ng-template>
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <label
+                        nz-checkbox
+                        [(ngModel)]="rememberMe"
+                        name="remember-me"
+                        >Remember me</label
+                    >
+                </div>
+                <div>
+                    <a
+                        class="text-sm font-medium text-gray-600 hover:underline"
+                        (click)="handleForgotPassword()"
+                    >
+                        Forgot your password?
+                    </a>
+                </div>
+            </div>
+            <button
+                nz-button
+                nzType="primary"
+                class="w-full"
+                type="submit"
+                (click)="handleLogin()"
+                [disabled]="isDisabled"
+            >
+                Log In
+            </button>
+        </form>
+        <div class="flex items-center justify-center">
+            <span class="text-sm text-gray-600"> Don't have an account? </span>
+            <a
+                class="ml-1 text-sm font-medium text-gray-600 hover:underline"
+                href="/register"
+            >
+                Sign Up
+            </a>
+        </div>
     </div>
-  </div>
 </section>

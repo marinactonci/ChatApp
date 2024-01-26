@@ -8,6 +8,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { AuthService } from "../../services/firebaseAuth.service";
 import { Router } from "@angular/router";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {FirestoreService} from "../../services/firebaseFirestore.service";
 
 @Component({
   selector: 'app-register',
@@ -15,7 +16,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
   imports: [
     NzInputModule, NzIconModule, FormsModule, NzButtonModule, NzCheckboxModule
   ],
-  providers: [AuthService],
+  providers: [AuthService, FirestoreService],
   templateUrl: './register.component.html'
 })
 export class RegisterComponent implements OnInit {
@@ -34,7 +35,7 @@ export class RegisterComponent implements OnInit {
   message = inject(NzMessageService);
 
   async ngOnInit() {
-    const listener = onAuthStateChanged(this.authService.auth, (user) => {
+    onAuthStateChanged(this.authService.auth, (user) => {
       this.isDisabled = !!user;
     });
   }
