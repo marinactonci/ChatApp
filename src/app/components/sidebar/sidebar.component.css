@@ -1,0 +1,26 @@
+.container{
+    display: flex;
+    height: calc(100vh - 64px);
+}
+.chat-list {
+    width: 30%;
+    border: 1px solid #e7e7e7;
+    border-top: none;
+}
+.input-container {
+    padding: 20px;
+}
+.users-input {
+    margin-top: 10px;
+    border: 1px solid #c0c0c0;
+    padding: 8px;
+    border-radius: 7px;
+    width: 100%;
+}
+.users-list {
+    padding: 20px;
+}
+.friend-name {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
