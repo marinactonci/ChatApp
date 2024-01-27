@@ -15,11 +15,4 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 export class ChatComponent {
   messages: string[] = [];
   newMessage: string = '';
-
-  sendMessage() {
-    if (this.newMessage.trim() !== '') {
-      this.messages.push(this.newMessage);
-      this.newMessage = '';
-    }
-  }
 }
