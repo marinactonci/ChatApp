@@ -1,10 +1,21 @@
 import { app } from './firebaseConfig.service';
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, query, where, DocumentData, onSnapshot } from 'firebase/firestore';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzConfigService } from 'ng-zorro-antd/core/config';
+import { NzConfig, provideNzConfig } from 'ng-zorro-antd/core/config';
+import { inject } from '@angular/core';
 
 export class FirestoreService {
   db = getFirestore(app);
   usersCollection = collection(this.db, 'users');
   chatRoomsCollection = collection(this.db, 'chatRooms');
+  
+  notification = inject(NzNotificationService);
+  nzConfigService = inject(NzConfigService);
+
+  constructor() {
+    this.nzConfigService.set('notification', { nzMaxStack: 1 });
+  }
 
   async getAllDocumentIds() {
     const querySnapshot = await getDocs(this.usersCollection);
@@ -22,11 +33,11 @@ export class FirestoreService {
     await setDoc(docRef, newUser);
   }
 
-  async getNotifications(userId: string) {
+  async getNotifications(userId: string, callback: (notifications: any[]) => void): Promise<() => void> {
     const docRef = doc(this.usersCollection, userId);
-    const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
+    // Subscribe to real-time updates on the friendRequests field
+    const unsubscribe = onSnapshot(docRef, async (docSnap) => {
       const friendRequests = docSnap.data()['friendRequests'] || [];
       const notifications = [];
 
@@ -39,15 +50,23 @@ export class FirestoreService {
           const senderData = senderDocSnap.data();
           const notification = { ...request, senderDisplayName: senderData['displayName'] };
           notifications.push(notification);
+
+          // Display the notification when a friend request is received
+          this.notification.blank(
+            'Friend Request',
+            `You have received a friend request from <strong>${senderData['displayName']}</strong>!`,
+            { nzDuration: 0, nzPlacement: 'bottomRight' }
+          );
         }
       }
 
-      return notifications;
-    } else {
-      console.error('User not found!');
-      return [];
-    }
+      // Invoke the callback with the updated notifications
+      callback(notifications);
+    });
+
+    return unsubscribe; // Return the unsubscribe function for cleanup when needed
   }
+  
 
   async getUsers() {
     const usersSnapshot = await getDocs(this.usersCollection);
@@ -184,4 +203,6 @@ export class FirestoreService {
 
     return unsubscribe;
   }
+
+
 }

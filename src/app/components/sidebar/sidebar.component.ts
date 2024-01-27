@@ -28,25 +28,28 @@ export class SidebarComponent implements OnInit {
   filteredFriends: DocumentData[] = [];
   private usersListenerUnsubscribe: (() => void) | null = null;
 
-
   async ngOnInit() {
     await this.loadUsers();
-
+  
     this.usersListenerUnsubscribe = this.firestoreService.listenForUsersChanges(users => {
       this.users = users;
-
+  
       const currentUser = this.authService.auth.currentUser;
       if (currentUser) {
         const currentUserUid = currentUser.uid;
-
+  
         // Await the result of getUserFriends
         this.firestoreService.getUserFriends(currentUserUid).then(friendsUids => {
+          // Exclude friends from the users list
           this.users = this.users.filter(user => user['uid'] !== currentUserUid && !friendsUids.includes(user['uid']));
         });
       }
-
+  
       this.filteredUsers = this.users;
       this.loadFriends();
+  
+      // Call filterUsers after loading users and friends
+      this.filterUsers();
     });
   }
 
@@ -91,17 +94,18 @@ export class SidebarComponent implements OnInit {
 
   filterUsers(): void {
     const inputValueLowerCase = (this.inputValue || '').toLowerCase();
-
-    // Filter the users based on the input value
+  
+    // Filter the users based on the input value, excluding the current user
     this.filteredUsers = this.users.filter(user =>
-      user['displayName'].toLowerCase().includes(inputValueLowerCase)
+      user['displayName'].toLowerCase().includes(inputValueLowerCase) && user['uid'] !== this.authService.auth.currentUser.uid
     );
-
-    // Filter the friends based on the input value
+  
+    // Filter the friends based on the input value, excluding the current user
     this.filteredFriends = this.friends.filter(friend =>
-      friend['displayName'].toLowerCase().includes(inputValueLowerCase)
+      friend['displayName'].toLowerCase().includes(inputValueLowerCase) && friend['uid'] !== this.authService.auth.currentUser.uid
     );
   }
+  
 
   async sendFriendRequest(receiverId: string) {
     try {
@@ -138,6 +142,12 @@ export class SidebarComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error starting chat:', error);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.usersListenerUnsubscribe) {
+      this.usersListenerUnsubscribe();
     }
   }
 }

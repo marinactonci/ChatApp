@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit {
   user: any = {};
   isLoggedIn = false;
   notifications: any[] = [];
+  private notificationsListenerUnsubscribe: any;
 
   authService = inject(AuthService);
   firestoreService = inject(FirestoreService);
@@ -32,14 +33,23 @@ export class HeaderComponent implements OnInit {
       if (user) {
         this.isLoggedIn = true;
         this.user = user;
-        this.notifications = await this.firestoreService.getNotifications(user.uid);
+  
+        // Subscribe to real-time updates on notifications
+        this.notificationsListenerUnsubscribe = this.firestoreService.getNotifications(user.uid, (notifications) => {
+          this.notifications = notifications;
+        });
       } else {
         this.isLoggedIn = false;
         this.user = {};
+  
+        // If user is not logged in, unsubscribe from real-time updates
+        if (this.notificationsListenerUnsubscribe) {
+          this.notificationsListenerUnsubscribe();
+        }
       }
     });
   }
-
+  
   async handleLogout() {
     await this.authService.logout();
   }
@@ -57,7 +67,7 @@ export class HeaderComponent implements OnInit {
 
       // Delete notification
       await this.firestoreService.deleteFriendRequestNotification(receiverId, senderId);
-      this.notifications = await this.firestoreService.getNotifications(this.authService.auth.currentUser.uid);
+      this.ngOnInit()
     } catch (error) {
       console.error('Error accepting friend request:', error);
     }
@@ -69,9 +79,15 @@ export class HeaderComponent implements OnInit {
       const receiverId = currentUser.uid;
 
       await this.firestoreService.deleteFriendRequestNotification(receiverId, senderId);
-      this.notifications = await this.firestoreService.getNotifications(this.authService.auth.currentUser.uid);
+      this.ngOnInit()
     } catch (error) {
       console.error('Error declining friend request:', error);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.notificationsListenerUnsubscribe) {
+      this.notificationsListenerUnsubscribe();
     }
   }
 }
