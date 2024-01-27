@@ -31,7 +31,8 @@
                 (click)="acceptFriendRequest(notification.senderId)">
                 <span nz-icon nzType="check"></span>
               </button>
-              <button nz-button (click)="declineFriendRequest(notification.senderId)" [nzSize]="'small'" nzShape="circle"><span nz-icon nzType="close"></span></button>
+              <button nz-button (click)="declineFriendRequest(notification.senderId)" [nzSize]="'small'"
+                nzShape="circle"><span nz-icon nzType="close"></span></button>
             </div>
           </div>
         </li>
@@ -46,8 +47,8 @@
         }
       </ul>
     </nz-dropdown-menu>
-    <img [src]="user.photoURL" alt="user"
-      class="w-10 h-10 rounded-full hover:cursor-pointer" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" />
+    <img [src]="user.photoURL" alt="user" class="w-10 h-10 rounded-full hover:cursor-pointer" nz-dropdown
+      [nzDropdownMenu]="menu" nzTrigger="click" />
     <nz-dropdown-menu #menu="nzDropdownMenu">
       <ul nz-menu>
         <li nz-menu-item [routerLink]="'/profile'">

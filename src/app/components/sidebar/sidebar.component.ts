@@ -21,7 +21,7 @@ export class SidebarComponent implements OnInit {
   firestoreService: FirestoreService = inject(FirestoreService);
   router: Router = inject(Router);
 
-  inputValue?: string;
+  inputValue?: string = '';
   users: DocumentData[] = [];
   friends: DocumentData[] = [];
   filteredUsers: DocumentData[] = [];
@@ -47,10 +47,7 @@ export class SidebarComponent implements OnInit {
   
       this.filteredUsers = this.users;
       this.loadFriends();
-  
-      // Call filterUsers after loading users and friends
-      this.filterUsers();
-    });
+      });
   }
 
   async loadUsers() {
@@ -90,19 +87,23 @@ export class SidebarComponent implements OnInit {
     } catch (error) {
       console.error('Error fetching friends:', error);
     }
+    this.filterUsers()
   }
 
   filterUsers(): void {
     const inputValueLowerCase = (this.inputValue || '').toLowerCase();
   
-    // Filter the users based on the input value, excluding the current user
+    // Filter the users based on the input value, excluding the current user and friends
     this.filteredUsers = this.users.filter(user =>
-      user['displayName'].toLowerCase().includes(inputValueLowerCase) && user['uid'] !== this.authService.auth.currentUser.uid
+      user['displayName'].toLowerCase().includes(inputValueLowerCase) &&
+      user['uid'] !== this.authService.auth.currentUser.uid &&
+      !this.friends.some(friend => friend['uid'] === user['uid'])
     );
   
     // Filter the friends based on the input value, excluding the current user
     this.filteredFriends = this.friends.filter(friend =>
-      friend['displayName'].toLowerCase().includes(inputValueLowerCase) && friend['uid'] !== this.authService.auth.currentUser.uid
+      friend['displayName'].toLowerCase().includes(inputValueLowerCase) &&
+      friend['uid'] !== this.authService.auth.currentUser.uid
     );
   }
   
