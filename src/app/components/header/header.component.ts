@@ -9,11 +9,12 @@ import { Router } from "@angular/router";
 import {FirestoreService} from "../../services/firebaseFirestore.service";
 import {NzBadgeModule} from "ng-zorro-antd/badge";
 import {NzEmptyComponent} from "ng-zorro-antd/empty";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-header",
   standalone: true,
-  imports: [NzIconModule, NzDrawerModule, NzButtonModule, NzDropDownModule, NzBadgeModule, NzEmptyComponent],
+  imports: [NzIconModule, NzDrawerModule, NzButtonModule, NzDropDownModule, NzBadgeModule, NzEmptyComponent, CommonModule],
   providers: [AuthService, FirestoreService],
   templateUrl: "./header.component.html",
 })
@@ -41,5 +42,26 @@ export class HeaderComponent implements OnInit {
 
   async handleLogout() {
     await this.authService.logout();
+  }
+
+  async acceptFriendRequest(senderId: string) {
+    try {
+      const currentUser = this.user;
+      const receiverId = currentUser.uid;
+
+      console.log('Accepting friend request from', senderId);
+      console.log('Current user:', currentUser);
+
+      // Update sender's friends list
+      await this.firestoreService.updateFriendsList(senderId, receiverId);
+
+      // Update receiver's friends list
+      await this.firestoreService.updateFriendsList(receiverId, senderId);
+
+      // Delete notification
+      await this.firestoreService.deleteFriendRequestNotification(receiverId, senderId);
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+    }
   }
 }

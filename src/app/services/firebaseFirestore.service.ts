@@ -1,5 +1,5 @@
 import { app } from './firebaseConfig.service';
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
 export class FirestoreService {
   db = getFirestore(app);
@@ -21,9 +21,30 @@ export class FirestoreService {
   async getNotifications(userId: string) {
     const docRef = doc(this.usersCollection, userId);
     const docSnap = await getDoc(docRef);
-    // @ts-ignore
-    return docSnap.data().friendRequests;
+    
+    if (docSnap.exists()) {
+      const friendRequests = docSnap.data()['friendRequests'] || [];
+      const notifications = [];
+  
+      for (const request of friendRequests) {
+        const senderId = request.senderId;
+        const senderDocRef = doc(this.usersCollection, senderId);
+        const senderDocSnap = await getDoc(senderDocRef);
+  
+        if (senderDocSnap.exists()) {
+          const senderData = senderDocSnap.data();
+          const notification = { ...request, senderDisplayName: senderData['displayName'] };
+          notifications.push(notification);
+        }
+      }
+  
+      return notifications;
+    } else {
+      console.error('User not found!');
+      return [];
+    }
   }
+  
 
   async getUsers() {
     const usersSnapshot = await getDocs(this.usersCollection);
@@ -74,6 +95,23 @@ export class FirestoreService {
 
     await updateDoc(userRef, {
       friendRequests: arrayUnion({ senderId, status: 'pending' })
+    });
+  }
+
+  async updateFriendsList(userId: string, friendId: string) {
+    const userRef = doc(this.usersCollection, userId);
+
+    await updateDoc(userRef, {
+      friends: arrayUnion(friendId),
+      friendRequests: arrayRemove({ senderId: friendId, status: 'pending' })
+    });
+  }
+
+  async deleteFriendRequestNotification(receiverId: string, senderId: string) {
+    const receiverRef = doc(this.usersCollection, receiverId);
+
+    await updateDoc(receiverRef, {
+      friendRequests: arrayRemove({ senderId, status: 'pending' })
     });
   }
 }
