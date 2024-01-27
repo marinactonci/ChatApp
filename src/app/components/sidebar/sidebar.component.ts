@@ -20,7 +20,9 @@ export class SidebarComponent implements OnInit {
 
   inputValue?: string;
   users: DocumentData[] = [];
-  filteredUsers: any[] = []; 
+  friends: DocumentData[] = [];
+  filteredUsers: DocumentData[] = [];
+  filteredFriends: DocumentData[] = [];
 
   ngOnInit(): void {
     this.loadUsers();
@@ -29,16 +31,24 @@ export class SidebarComponent implements OnInit {
   async loadUsers() {
     try {
       this.users = await this.firestoreService.getUsers();
+
+      const currentUser = this.authService.auth.currentUser;
+      if (currentUser) {
+        const currentUserUid = currentUser.uid;
+
+        const friendsUids = await this.firestoreService.getUserFriends(currentUserUid);
+
+        // Exclude the current user and their friends from the users list
+        this.users = this.users.filter(user =>
+          user['uid'] !== currentUserUid && !friendsUids.includes(user['uid'])
+        );
+      }
+
       this.filteredUsers = this.users;
+      this.loadFriends();
     } catch (error) {
       console.error('Error fetching users:', error);
     }
-  }
-
-  filterUsers(): void {
-    this.filteredUsers = this.users.filter(user =>
-      user['displayName'].toLowerCase().includes((this.inputValue || '').toLowerCase())
-    );
   }
 
   async loadFriends() {
@@ -46,14 +56,28 @@ export class SidebarComponent implements OnInit {
       const user = this.authService.auth.currentUser;
       if (user) {
         const userId = user.uid;
-        const friends = await this.firestoreService.getUserFriends(userId);
-        
-        this.filteredUsers = this.users.filter(user =>
-          friends.includes(user['uid'])
-        );
+
+        const friendsUids = await this.firestoreService.getUserFriends(userId);
+
+        this.friends = await this.firestoreService.getUsersByUids(friendsUids);
+        this.filteredFriends = this.friends; // Initialize filteredFriends with the full friends list
       }
     } catch (error) {
       console.error('Error fetching friends:', error);
     }
+  }
+
+  filterUsers(): void {
+    const inputValueLowerCase = (this.inputValue || '').toLowerCase();
+
+    // Filter the users based on the input value
+    this.filteredUsers = this.users.filter(user =>
+      user['displayName'].toLowerCase().includes(inputValueLowerCase)
+    );
+
+    // Filter the friends based on the input value
+    this.filteredFriends = this.friends.filter(friend =>
+      friend['displayName'].toLowerCase().includes(inputValueLowerCase)
+    );
   }
 }
