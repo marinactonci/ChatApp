@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FirestoreService } from '../../services/firebaseFirestore.service';
 import { AuthService } from '../../services/firebaseAuth.service';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { onAuthStateChanged } from 'firebase/auth';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -18,6 +18,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-mo
     ChangeNameComponent,
     ChangePasswordComponent,
     ConfirmModalComponent,
+    RouterLink,
   ],
   providers: [FirestoreService, AuthService],
   templateUrl: './profile.component.html',
@@ -52,9 +53,5 @@ export class ProfileComponent implements OnInit {
   async logout() {
     await this.auth.logout();
     this.router.navigate(['/login']);
-  }
-
-  navigateTo(link: string) {
-    this.router.navigate([link]);
   }
 }

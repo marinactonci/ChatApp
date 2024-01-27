@@ -40,10 +40,6 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  navigateTo(link: string) {
-    this.router.navigate([link]);
-  }
-
   async handleLogout() {
     await this.authService.logout();
   }

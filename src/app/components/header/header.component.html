@@ -46,11 +46,11 @@
         }
       </ul>
     </nz-dropdown-menu>
-    <img src="{{ user.photoURL ? user.photoURL : 'assets/default-profile.jpeg' }}" alt="user"
+    <img [src]="user.photoURL" alt="user"
       class="w-10 h-10 rounded-full hover:cursor-pointer" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" />
     <nz-dropdown-menu #menu="nzDropdownMenu">
       <ul nz-menu>
-        <li nz-menu-item>
+        <li nz-menu-item [routerLink]="'/profile'">
           <div class="flex items-center gap-2">
             <span nz-icon nzType="user" nzTheme="outline"></span>
             <span>{{ user.displayName }}</span>

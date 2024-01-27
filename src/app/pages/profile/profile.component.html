@@ -3,7 +3,7 @@
   <div class="h-max grid place-items-center">
     <div class="flex flex-col items-center justify-center gap-3">
       <p class="text-xl">You have to be signed in to view this page</p>
-      <button nz-button nzType="primary" (click)="navigateTo('/login')">
+      <button nz-button nzType="primary" [routerLink]="'/login'">
         Log In
       </button>
     </div>
