@@ -1,44 +1,47 @@
 <div class="flex h-[97vh]">
-    <div class="w-full border-r">
-        <div class="p-5">
-            <input class="mt-2.5 border" placeholder="Search users..." nz-input [(ngModel)]="inputValue" (input)="filterUsers()" />
-        </div>
-
-        <div class="p-5">
-            <nz-list nzItemLayout="horizontal" nzHeader="Friends">
-                @for (item of filteredFriends; track $index) {
-                  <nz-list-item class="group/item hover:bg-slate-100 cursor-pointer" (click)="startChat(item['uid'])">
-                    <nz-list-item-meta class="ml-3" [nzAvatar]="item['photoURL'] ? item['photoURL'] : 'assets/default-profile.jpeg'">
-                      <nz-list-item-meta-title>
-                        <a class="text-lg mb-1.5">{{ item['displayName'] }}</a>
-                      </nz-list-item-meta-title>
-                    </nz-list-item-meta>
-                  </nz-list-item>
-                }
-                @if (filteredFriends.length === 0) {
-                  <nz-list-empty></nz-list-empty>
-                }
-              </nz-list>
-
-            <nz-list nzItemLayout="horizontal" nzHeader="People you may know">
-                @for (item of filteredUsers; track $index) {
-                    <nz-list-item class="group/item hover:bg-slate-100 cursor-pointer">
-                        <nz-list-item-meta class="ml-3" [nzAvatar]="item['photoURL'] ? item['photoURL'] : 'assets/default-profile.jpeg'">
-                            <nz-list-item-meta-title>
-                                <a class="text-lg mb-1.5">{{ item['displayName'] }}</a>
-                            </nz-list-item-meta-title>
-                        </nz-list-item-meta>
-                        <ul nz-list-item-actions>
-                            <nz-list-item-action>
-                                <button nz-button nzType="primary" (click)="sendFriendRequest(item['uid'])">Add friend</button>
-                            </nz-list-item-action>
-                          </ul>
-                    </nz-list-item>
-                }
-                @if (filteredUsers.length === 0) {
-                    <nz-list-empty></nz-list-empty>
-                }
-            </nz-list>
-        </div>
+  <div class="w-full border-r">
+    <div class="p-5">
+      <input class="mt-2.5 border" placeholder="Search users..." nz-input [(ngModel)]="inputValue"
+        (input)="filterUsers()" />
     </div>
+
+    <div class="p-5">
+      <nz-list nzItemLayout="horizontal" nzHeader="Friends">
+        @for (item of filteredFriends; track $index) {
+        <nz-list-item class="group/item hover:bg-slate-100 cursor-pointer" (click)="startChat(item['uid'])">
+          <nz-list-item-meta class="ml-3"
+            [nzAvatar]="item['photoURL'] ? item['photoURL'] : 'assets/default-profile.jpeg'">
+            <nz-list-item-meta-title>
+              <a class="text-lg mb-1.5">{{ item['displayName'] }}</a>
+            </nz-list-item-meta-title>
+          </nz-list-item-meta>
+        </nz-list-item>
+        }
+        @if (filteredFriends.length === 0) {
+        <nz-list-empty></nz-list-empty>
+        }
+      </nz-list>
+
+      <nz-list nzItemLayout="horizontal" nzHeader="People you may know">
+        @for (item of filteredUsers; track $index) {
+        <nz-list-item class="group/item hover:bg-slate-100 cursor-pointer">
+          <nz-list-item-meta class="ml-3"
+            [nzAvatar]="item['photoURL'] ? item['photoURL'] : 'assets/default-profile.jpeg'">
+            <nz-list-item-meta-title>
+              <a class="text-lg mb-1.5">{{ item['displayName'] }}</a>
+            </nz-list-item-meta-title>
+          </nz-list-item-meta>
+          <ul nz-list-item-actions>
+            <nz-list-item-action>
+              <button nz-button nzType="primary" (click)="sendFriendRequest(item['uid'])">Add friend</button>
+            </nz-list-item-action>
+          </ul>
+        </nz-list-item>
+        }
+        @if (filteredUsers.length === 0) {
+        <nz-list-empty></nz-list-empty>
+        }
+      </nz-list>
+    </div>
+  </div>
 </div>

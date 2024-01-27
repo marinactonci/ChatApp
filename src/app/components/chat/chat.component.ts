@@ -7,11 +7,12 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { ActivatedRoute } from '@angular/router';
 import { FirestoreService } from '../../services/firebaseFirestore.service';
 import { AuthService } from '../../services/firebaseAuth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, NzInputModule, NzButtonModule, NzIconModule],
+  imports: [ReactiveFormsModule, FormsModule, NzInputModule, NzButtonModule, NzIconModule, CommonModule],
   providers: [FirestoreService, AuthService],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
@@ -23,7 +24,7 @@ export class ChatComponent {
 
   private route: ActivatedRoute = inject(ActivatedRoute);
   private firestoreService: FirestoreService = inject(FirestoreService);
-  private authService: AuthService = inject(AuthService);
+  protected authService: AuthService = inject(AuthService);
 
 
   ngOnInit() {
@@ -37,19 +38,19 @@ export class ChatComponent {
     if (this.chatRoomId && this.messageContent.trim() !== '') {
       try {
         const currentUser = this.authService.auth.currentUser;
-  
+
         if (currentUser) {
           const message = {
             timestamp: new Date(),
             sender: currentUser.uid,
             content: this.messageContent,
           };
-  
+
           const chatRoom = await this.firestoreService.getChatRoom(this.chatRoomId);
-  
+
           if (chatRoom) {
             const updatedMessages = Array.isArray(chatRoom.messages) ? [...chatRoom.messages, message] : [message];
-  
+
             await this.firestoreService.updateChatRoom(this.chatRoomId, {
               messages: updatedMessages,
             });
@@ -73,7 +74,13 @@ export class ChatComponent {
         const chatRoom = await this.firestoreService.getChatRoom(this.chatRoomId);
 
         if (chatRoom && Array.isArray(chatRoom.messages)) {
-          this.messages = chatRoom.messages;
+          const senderUids = chatRoom.messages.map((message) => message.sender);
+          const senders = await this.firestoreService.getUsersByUids(senderUids);
+
+          this.messages = chatRoom.messages.map((message) => {
+            const sender = senders.find((user) => user.uid === message.sender);
+            return { ...message, senderDisplayName: sender?.displayName || 'Unknown', senderProfilePicture: sender?.photoURL || 'https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' };
+          });
         } else {
           console.error('Chat room or messages not found!');
         }
@@ -82,4 +89,5 @@ export class ChatComponent {
       console.error('Error loading chat room messages:', error);
     }
   }
+
 }
