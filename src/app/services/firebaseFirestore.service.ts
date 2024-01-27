@@ -1,33 +1,48 @@
 import { app } from './firebaseConfig.service';
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  setDoc,
+} from 'firebase/firestore';
 
 export class FirestoreService {
   db = getFirestore(app);
-  usersCollection = collection(this.db, "users");
-  chatRoomsCollection = collection(this.db, "chatRooms");
+  usersCollection = collection(this.db, 'users');
+  chatRoomsCollection = collection(this.db, 'chatRooms');
+
+  async getAllDocumentIds() {
+    const querySnapshot = await getDocs(this.usersCollection);
+    return querySnapshot.docs.map((doc) => doc.id);
+  }
 
   async addToUserCollection(user: any) {
     const docRef = doc(this.usersCollection, user.uid);
     const newUser = {
       displayName: user.displayName,
       email: user.email,
-      photoURL: '/assets/default-profile.png',
+      photoURL: user.photoURL ? user.photoURL : '/assets/default-profile.png',
       friends: [],
-      friendRequests: []
-    }
+      friendRequests: [],
+    };
     await setDoc(docRef, newUser);
   }
 
   async getNotifications(userId: string) {
     const docRef = doc(this.usersCollection, userId);
     const docSnap = await getDoc(docRef);
-    // @ts-ignore
-    return docSnap.data().friendRequests;
+    if (!docSnap.exists()) {
+      console.error('User not found!');
+      return [];
+    }
+    return docSnap.data()['friendRequests'];
   }
 
   async getUsers() {
     const usersSnapshot = await getDocs(this.usersCollection);
-    return usersSnapshot.docs.map(doc => {
+    return usersSnapshot.docs.map((doc) => {
       const userData = doc.data();
       return { ...userData, uid: doc.id };
     });
@@ -68,5 +83,4 @@ export class FirestoreService {
 
     return users;
   }
-
 }

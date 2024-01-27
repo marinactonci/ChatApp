@@ -24,8 +24,8 @@ export class SidebarComponent implements OnInit {
   filteredUsers: DocumentData[] = [];
   filteredFriends: DocumentData[] = [];
 
-  ngOnInit(): void {
-    this.loadUsers();
+  async ngOnInit() {
+    await this.loadUsers();
   }
 
   async loadUsers() {
