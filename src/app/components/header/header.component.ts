@@ -49,9 +49,6 @@ export class HeaderComponent implements OnInit {
       const currentUser = this.user;
       const receiverId = currentUser.uid;
 
-      console.log('Accepting friend request from', senderId);
-      console.log('Current user:', currentUser);
-
       // Update sender's friends list
       await this.firestoreService.updateFriendsList(senderId, receiverId);
 
