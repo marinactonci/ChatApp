@@ -1,1 +1,20 @@
-<p>chat works!</p>
+<!-- chat.component.html -->
+<div class="w-full">
+    <div class="bg-gray-200">
+        <div class="mb-4 h-64 overflow-y-auto">
+            @for (message of messages; track $index) {
+            <div class="mb-2">
+                {{ message }}
+            </div>
+            }
+        </div>
+        <div class="flex">
+            <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
+                <input type="text" nz-input placeholder="Send a message..." />
+            </nz-input-group>
+            <ng-template #suffixButton>
+                <button nz-button nzType="primary" nzSearch><span nz-icon nzType="send" nzTheme="outline"></span></button>
+            </ng-template>
+        </div>
+    </div>
+</div>

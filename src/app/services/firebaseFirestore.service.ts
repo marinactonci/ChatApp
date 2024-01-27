@@ -1,13 +1,5 @@
 import { app } from './firebaseConfig.service';
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  setDoc,
-} from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, query, where } from 'firebase/firestore';
 
 export class FirestoreService {
   db = getFirestore(app);
@@ -33,11 +25,28 @@ export class FirestoreService {
   async getNotifications(userId: string) {
     const docRef = doc(this.usersCollection, userId);
     const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
+
+    if (docSnap.exists()) {
+      const friendRequests = docSnap.data()['friendRequests'] || [];
+      const notifications = [];
+
+      for (const request of friendRequests) {
+        const senderId = request.senderId;
+        const senderDocRef = doc(this.usersCollection, senderId);
+        const senderDocSnap = await getDoc(senderDocRef);
+
+        if (senderDocSnap.exists()) {
+          const senderData = senderDocSnap.data();
+          const notification = { ...request, senderDisplayName: senderData['displayName'] };
+          notifications.push(notification);
+        }
+      }
+
+      return notifications;
+    } else {
       console.error('User not found!');
       return [];
     }
-    return docSnap.data()['friendRequests'];
   }
 
   async getUsers() {
@@ -92,5 +101,58 @@ export class FirestoreService {
   async deleteUser(userId: string) {
     const docRef = doc(this.usersCollection, userId);
     await deleteDoc(docRef);
+  }
+  async sendFriendRequest(senderId: string, receiverId: string) {
+    const userRef = doc(this.usersCollection, receiverId);
+
+    await updateDoc(userRef, {
+      friendRequests: arrayUnion({ senderId, status: 'pending' })
+    });
+  }
+
+  async updateFriendsList(userId: string, friendId: string) {
+    const userRef = doc(this.usersCollection, userId);
+
+    await updateDoc(userRef, {
+      friends: arrayUnion(friendId),
+      friendRequests: arrayRemove({ senderId: friendId, status: 'pending' })
+    });
+  }
+
+  async deleteFriendRequestNotification(receiverId: string, senderId: string) {
+    const receiverRef = doc(this.usersCollection, receiverId);
+
+    await updateDoc(receiverRef, {
+      friendRequests: arrayRemove({ senderId, status: 'pending' })
+    });
+  }
+
+  async getChatRoomId(participants: string[]): Promise<string | null> {
+    participants.sort();
+
+    const querySnapshot = await getDocs(
+      query(this.chatRoomsCollection, where('participants', '==', participants))
+    );
+
+    if (querySnapshot.docs.length > 0) {
+      return querySnapshot.docs[0].id;
+    } else {
+      return null;
+    }
+  }
+
+  async createChatRoom(participants: string[]) {
+    participants.sort();
+
+    const chatRoomRef = doc(this.chatRoomsCollection);
+
+    const newChatRoom = {
+      participants,
+      messages: [],
+    };
+
+    await setDoc(chatRoomRef, newChatRoom);
+
+    return chatRoomRef.id;
   }
 }

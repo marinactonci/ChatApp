@@ -6,17 +6,20 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { FirestoreService } from '../../services/firebaseFirestore.service';
 import { DocumentData } from 'firebase/firestore';
 import { AuthService } from '../../services/firebaseAuth.service';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [NzAutocompleteModule, FormsModule, NzListModule, NzInputModule],
+  imports: [NzAutocompleteModule, FormsModule, NzListModule, NzInputModule, NzButtonModule],
   templateUrl: './sidebar.component.html',
   providers: [AuthService, FirestoreService]
 })
 export class SidebarComponent implements OnInit {
   authService: AuthService = inject(AuthService);
   firestoreService: FirestoreService = inject(FirestoreService);
+  router: Router = inject(Router);
 
   inputValue?: string;
   users: DocumentData[] = [];
@@ -79,5 +82,43 @@ export class SidebarComponent implements OnInit {
     this.filteredFriends = this.friends.filter(friend =>
       friend['displayName'].toLowerCase().includes(inputValueLowerCase)
     );
+  }
+
+  async sendFriendRequest(receiverId: string) {
+    try {
+      const currentUser = this.authService.auth.currentUser;
+      if (currentUser) {
+        const senderId = currentUser.uid;
+
+        await this.firestoreService.sendFriendRequest(senderId, receiverId);
+      }
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+    }
+  }
+
+  async startChat(participantId: string) {
+    try {
+      const currentUser = this.authService.auth.currentUser;
+      if (currentUser) {
+        const currentUserId = currentUser.uid;
+  
+        // Check if a chat room already exists with these participants
+        const existingChatRoomId = await this.firestoreService.getChatRoomId([currentUserId, participantId]);
+  
+        if (existingChatRoomId) {
+          // Redirect to the existing chat room
+          this.router.navigate(['/chat', existingChatRoomId]);
+        } else {
+          // Create a new chat room with both participants
+          const newChatRoomId = await this.firestoreService.createChatRoom([currentUserId, participantId]);
+  
+          // Redirect to the new chat room
+          this.router.navigate(['/chat', newChatRoomId]);
+        }
+      }
+    } catch (error) {
+      console.error('Error starting chat:', error);
+    }
   }
 }

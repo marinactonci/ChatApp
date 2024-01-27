@@ -1,28 +1,22 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { AuthService } from '../../services/firebaseAuth.service';
-import { onAuthStateChanged } from 'firebase/auth';
-import { Router } from '@angular/router';
-import { FirestoreService } from '../../services/firebaseFirestore.service';
-import { NzBadgeModule } from 'ng-zorro-antd/badge';
-import { NzEmptyComponent } from 'ng-zorro-antd/empty';
+import { Component, inject, OnInit } from "@angular/core";
+import { NzIconModule } from "ng-zorro-antd/icon";
+import { NzDrawerModule } from "ng-zorro-antd/drawer";
+import { NzButtonModule } from "ng-zorro-antd/button";
+import { NzDropDownModule } from "ng-zorro-antd/dropdown";
+import { AuthService } from "../../services/firebaseAuth.service";
+import { onAuthStateChanged } from "firebase/auth";
+import { Router, RouterModule } from "@angular/router";
+import {FirestoreService} from "../../services/firebaseFirestore.service";
+import {NzBadgeModule} from "ng-zorro-antd/badge";
+import {NzEmptyComponent} from "ng-zorro-antd/empty";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-header',
+  selector: "app-header",
   standalone: true,
-  imports: [
-    NzIconModule,
-    NzDrawerModule,
-    NzButtonModule,
-    NzDropDownModule,
-    NzBadgeModule,
-    NzEmptyComponent,
-  ],
+  imports: [NzIconModule, NzDrawerModule, NzButtonModule, NzDropDownModule, NzBadgeModule, NzEmptyComponent, CommonModule, RouterModule],
   providers: [AuthService, FirestoreService],
-  templateUrl: './header.component.html',
+  templateUrl: "./header.component.html",
 })
 export class HeaderComponent implements OnInit {
   user: any = {};
@@ -38,9 +32,7 @@ export class HeaderComponent implements OnInit {
       if (user) {
         this.isLoggedIn = true;
         this.user = user;
-        this.notifications = await this.firestoreService.getNotifications(
-          user.uid
-        );
+        this.notifications = await this.firestoreService.getNotifications(user.uid);
       } else {
         this.isLoggedIn = false;
         this.user = {};
@@ -54,5 +46,23 @@ export class HeaderComponent implements OnInit {
 
   async handleLogout() {
     await this.authService.logout();
+  }
+
+  async acceptFriendRequest(senderId: string) {
+    try {
+      const currentUser = this.user;
+      const receiverId = currentUser.uid;
+
+      // Update sender's friends list
+      await this.firestoreService.updateFriendsList(senderId, receiverId);
+
+      // Update receiver's friends list
+      await this.firestoreService.updateFriendsList(receiverId, senderId);
+
+      // Delete notification
+      await this.firestoreService.deleteFriendRequestNotification(receiverId, senderId);
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+    }
   }
 }
