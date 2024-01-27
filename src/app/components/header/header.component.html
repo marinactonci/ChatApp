@@ -31,7 +31,7 @@
                 (click)="acceptFriendRequest(notification.senderId)">
                 <span nz-icon nzType="check"></span>
               </button>
-              <button nz-button [nzSize]="'small'" nzShape="circle"><span nz-icon nzType="close"></span></button>
+              <button nz-button (click)="declineFriendRequest(notification.senderId)" [nzSize]="'small'" nzShape="circle"><span nz-icon nzType="close"></span></button>
             </div>
           </div>
         </li>

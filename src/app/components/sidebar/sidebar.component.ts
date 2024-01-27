@@ -26,9 +26,28 @@ export class SidebarComponent implements OnInit {
   friends: DocumentData[] = [];
   filteredUsers: DocumentData[] = [];
   filteredFriends: DocumentData[] = [];
+  private usersListenerUnsubscribe: (() => void) | null = null;
+
 
   async ngOnInit() {
     await this.loadUsers();
+
+    this.usersListenerUnsubscribe = this.firestoreService.listenForUsersChanges(users => {
+      this.users = users;
+
+      const currentUser = this.authService.auth.currentUser;
+      if (currentUser) {
+        const currentUserUid = currentUser.uid;
+
+        // Await the result of getUserFriends
+        this.firestoreService.getUserFriends(currentUserUid).then(friendsUids => {
+          this.users = this.users.filter(user => user['uid'] !== currentUserUid && !friendsUids.includes(user['uid']));
+        });
+      }
+
+      this.filteredUsers = this.users;
+      this.loadFriends();
+    });
   }
 
   async loadUsers() {

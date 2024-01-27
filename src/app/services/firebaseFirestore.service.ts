@@ -1,5 +1,5 @@
 import { app } from './firebaseConfig.service';
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, query, where } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, query, where, DocumentData, onSnapshot } from 'firebase/firestore';
 
 export class FirestoreService {
   db = getFirestore(app);
@@ -171,5 +171,17 @@ export class FirestoreService {
   async updateChatRoom(chatRoomId: string, data: any) {
     const chatRoomRef = doc(this.chatRoomsCollection, chatRoomId);
     await updateDoc(chatRoomRef, data);
+  }
+
+  listenForUsersChanges(callback: (users: DocumentData[]) => void): (() => void) {
+    const usersCollection = collection(this.db, 'users');
+
+    // Subscribe to real-time updates on the users collection
+    const unsubscribe = onSnapshot(usersCollection, (querySnapshot) => {
+      const users = querySnapshot.docs.map(doc => ({ ...doc.data(), uid: doc.id }));
+      callback(users);
+    });
+
+    return unsubscribe;
   }
 }

@@ -57,8 +57,21 @@ export class HeaderComponent implements OnInit {
 
       // Delete notification
       await this.firestoreService.deleteFriendRequestNotification(receiverId, senderId);
+      this.notifications = await this.firestoreService.getNotifications(this.authService.auth.currentUser.uid);
     } catch (error) {
       console.error('Error accepting friend request:', error);
+    }
+  }
+
+  async declineFriendRequest(senderId: string) {
+    try {
+      const currentUser = this.user;
+      const receiverId = currentUser.uid;
+
+      await this.firestoreService.deleteFriendRequestNotification(receiverId, senderId);
+      this.notifications = await this.firestoreService.getNotifications(this.authService.auth.currentUser.uid);
+    } catch (error) {
+      console.error('Error declining friend request:', error);
     }
   }
 }
