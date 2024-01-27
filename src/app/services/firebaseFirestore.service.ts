@@ -1,5 +1,5 @@
 import { app } from './firebaseConfig.service';
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove, query, where } from 'firebase/firestore';
 
 export class FirestoreService {
   db = getFirestore(app);
@@ -114,4 +114,32 @@ export class FirestoreService {
       friendRequests: arrayRemove({ senderId, status: 'pending' })
     });
   }
+  
+  async createChatRoom(participants: string[]) {
+    const chatRoomRef = doc(this.chatRoomsCollection);
+  
+    // Create a new chat room with participants and an empty messages array
+    const newChatRoom = {
+      participants,
+      messages: [],
+    };
+  
+    await setDoc(chatRoomRef, newChatRoom);
+  
+    // Return the ID of the newly created chat room
+    return chatRoomRef.id;
+  }
+  
+  async getChatRoomId(participants: string[]): Promise<string | null> {
+    const querySnapshot = await getDocs(
+      query(this.chatRoomsCollection, where('participants', '==', participants))
+    );
+  
+    if (querySnapshot.docs.length > 0) {
+      return querySnapshot.docs[0].id;
+    } else {
+      return null;
+    }
+  }
+  
 }

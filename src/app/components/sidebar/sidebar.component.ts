@@ -7,6 +7,7 @@ import { FirestoreService } from '../../services/firebaseFirestore.service';
 import { DocumentData } from 'firebase/firestore';
 import { AuthService } from '../../services/firebaseAuth.service';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -18,6 +19,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 export class SidebarComponent implements OnInit {
   authService: AuthService = inject(AuthService);
   firestoreService: FirestoreService = inject(FirestoreService);
+  router: Router = inject(Router);
 
   inputValue?: string;
   users: DocumentData[] = [];
@@ -92,6 +94,31 @@ export class SidebarComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error sending friend request:', error);
+    }
+  }
+
+  async startChat(participantId: string) {
+    try {
+      const currentUser = this.authService.auth.currentUser;
+      if (currentUser) {
+        const currentUserId = currentUser.uid;
+  
+        // Check if a chat room already exists with these participants
+        const existingChatRoomId = await this.firestoreService.getChatRoomId([currentUserId, participantId]);
+  
+        if (existingChatRoomId) {
+          // Redirect to the existing chat room
+          this.router.navigate(['/chat', existingChatRoomId]);
+        } else {
+          // Create a new chat room with both participants
+          const newChatRoomId = await this.firestoreService.createChatRoom([currentUserId, participantId]);
+  
+          // Redirect to the new chat room
+          this.router.navigate(['/chat', newChatRoomId]);
+        }
+      }
+    } catch (error) {
+      console.error('Error starting chat:', error);
     }
   }
 }
