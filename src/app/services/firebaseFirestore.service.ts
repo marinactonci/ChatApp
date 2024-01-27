@@ -6,7 +6,6 @@ export class FirestoreService {
   usersCollection = collection(this.db, "users");
   chatRoomsCollection = collection(this.db, "chatRooms");
 
-
   async addToUserCollection(user: any) {
     const docRef = doc(this.usersCollection, user.uid);
     const newUser = {
@@ -28,18 +27,46 @@ export class FirestoreService {
 
   async getUsers() {
     const usersSnapshot = await getDocs(this.usersCollection);
-    return usersSnapshot.docs.map(doc => doc.data());
+    return usersSnapshot.docs.map(doc => {
+      const userData = doc.data();
+      return { ...userData, uid: doc.id };
+    });
   }
 
   async getUserFriends(userId: string) {
-    const userDocRef = doc(this.usersCollection, userId);
-    const userDocSnap = await getDoc(userDocRef);
+    try {
+      const userDocRef = doc(this.usersCollection, userId);
+      const userDocSnap = await getDoc(userDocRef);
 
-    if (userDocSnap.exists()) {
-      return userDocSnap.data()['friends'] || [];
-    } else {
-      console.error('User not found!');
+      if (userDocSnap.exists()) {
+        return userDocSnap.data()['friends'] || [];
+      } else {
+        console.error('User not found!');
+        return [];
+      }
+    } catch (error) {
+      console.error('Error fetching user friends:', error);
       return [];
     }
   }
+
+  // Add this method to your FirestoreService
+  async getUsersByUids(uids: string[]) {
+    const users = [];
+
+    for (const uid of uids) {
+      const userDocRef = doc(this.usersCollection, uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        users.push({ ...userData, uid: userDocSnap.id });
+      } else {
+        console.error('User not found with UID:', uid);
+      }
+    }
+
+    return users;
+  }
+
 }
