@@ -74,6 +74,11 @@ export class AuthService {
       if (user.displayName === null) {
         await updateProfile(user, { displayName: email.split("@")[0] });
       }
+      if (user.photoURL === null) {
+        await updateProfile(user, {
+          photoURL: "/assets/default-profile.png",
+        });
+      }
       await this.firestore.addToUserCollection(user);
       this.router.navigateByUrl("/").then((r) => console.log(r));
       this.message.create("success", "Successfully registered!");
