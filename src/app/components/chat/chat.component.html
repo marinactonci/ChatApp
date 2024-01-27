@@ -4,16 +4,16 @@
         <div class="mb-4 h-64 overflow-y-auto">
             @for (message of messages; track $index) {
             <div class="mb-2">
-                {{ message }}
+                {{ message['content'] }}
             </div>
             }
         </div>
         <div class="flex">
             <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
-                <input type="text" nz-input placeholder="Send a message..." />
+                <input [(ngModel)]="messageContent" type="text" nz-input placeholder="Send a message..." (keydown.enter)="sendMessage()" />
             </nz-input-group>
             <ng-template #suffixButton>
-                <button nz-button nzType="primary" nzSearch><span nz-icon nzType="send" nzTheme="outline"></span></button>
+                <button nz-button nzType="primary" nzSearch><span nz-icon nzType="send" (click)="sendMessage()" nzTheme="outline"></span></button>
             </ng-template>
         </div>
     </div>

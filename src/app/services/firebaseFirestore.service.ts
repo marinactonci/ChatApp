@@ -155,4 +155,21 @@ export class FirestoreService {
 
     return chatRoomRef.id;
   }
+
+  async getChatRoom(chatRoomId: string): Promise<any | null> {
+    const chatRoomRef = doc(this.chatRoomsCollection, chatRoomId);
+    const chatRoomSnap = await getDoc(chatRoomRef);
+
+    if (chatRoomSnap.exists()) {
+      return { ...chatRoomSnap.data(), id: chatRoomSnap.id };
+    } else {
+      console.error('Chat room not found!');
+      return null;
+    }
+  }
+
+  async updateChatRoom(chatRoomId: string, data: any) {
+    const chatRoomRef = doc(this.chatRoomsCollection, chatRoomId);
+    await updateDoc(chatRoomRef, data);
+  }
 }
