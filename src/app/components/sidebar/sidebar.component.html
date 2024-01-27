@@ -14,6 +14,7 @@
                             </nz-list-item-meta-title>
                         </nz-list-item-meta>
                     </nz-list-item>
+
                 }
                 @if (filteredFriends.length === 0) {
                     <nz-list-empty></nz-list-empty>
@@ -28,6 +29,11 @@
                                 <a class="text-lg mb-1.5">{{ item['displayName'] }}</a>
                             </nz-list-item-meta-title>
                         </nz-list-item-meta>
+                        <ul nz-list-item-actions>
+                            <nz-list-item-action>
+                                <button nz-button nzType="primary" (click)="sendFriendRequest(item['uid'])">Add friend</button>
+                            </nz-list-item-action>
+                          </ul>
                     </nz-list-item>
                 }
                 @if (filteredUsers.length === 0) {

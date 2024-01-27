@@ -6,11 +6,12 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { FirestoreService } from '../../services/firebaseFirestore.service';
 import { DocumentData } from 'firebase/firestore';
 import { AuthService } from '../../services/firebaseAuth.service';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [NzAutocompleteModule, FormsModule, NzListModule, NzInputModule],
+  imports: [NzAutocompleteModule, FormsModule, NzListModule, NzInputModule, NzButtonModule],
   templateUrl: './sidebar.component.html',
   providers: [AuthService, FirestoreService]
 })
@@ -79,5 +80,18 @@ export class SidebarComponent implements OnInit {
     this.filteredFriends = this.friends.filter(friend =>
       friend['displayName'].toLowerCase().includes(inputValueLowerCase)
     );
+  }
+
+  async sendFriendRequest(receiverId: string) {
+    try {
+      const currentUser = this.authService.auth.currentUser;
+      if (currentUser) {
+        const senderId = currentUser.uid;
+
+        await this.firestoreService.sendFriendRequest(senderId, receiverId);
+      }
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+    }
   }
 }

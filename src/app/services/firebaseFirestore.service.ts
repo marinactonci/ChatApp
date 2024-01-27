@@ -1,5 +1,5 @@
 import { app } from './firebaseConfig.service';
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 export class FirestoreService {
   db = getFirestore(app);
@@ -69,4 +69,11 @@ export class FirestoreService {
     return users;
   }
 
+  async sendFriendRequest(senderId: string, receiverId: string) {
+    const userRef = doc(this.usersCollection, receiverId);
+
+    await updateDoc(userRef, {
+      friendRequests: arrayUnion({ senderId, status: 'pending' })
+    });
+  }
 }
