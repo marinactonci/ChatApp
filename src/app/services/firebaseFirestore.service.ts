@@ -44,7 +44,6 @@ export class FirestoreService {
       return [];
     }
   }
-  
 
   async getUsers() {
     const usersSnapshot = await getDocs(this.usersCollection);
@@ -114,23 +113,10 @@ export class FirestoreService {
       friendRequests: arrayRemove({ senderId, status: 'pending' })
     });
   }
-  
-  async createChatRoom(participants: string[]) {
-    const chatRoomRef = doc(this.chatRoomsCollection);
-  
-    // Create a new chat room with participants and an empty messages array
-    const newChatRoom = {
-      participants,
-      messages: [],
-    };
-  
-    await setDoc(chatRoomRef, newChatRoom);
-  
-    // Return the ID of the newly created chat room
-    return chatRoomRef.id;
-  }
-  
+
   async getChatRoomId(participants: string[]): Promise<string | null> {
+    participants.sort();
+  
     const querySnapshot = await getDocs(
       query(this.chatRoomsCollection, where('participants', '==', participants))
     );
@@ -142,4 +128,18 @@ export class FirestoreService {
     }
   }
   
+  async createChatRoom(participants: string[]) {
+    participants.sort();
+  
+    const chatRoomRef = doc(this.chatRoomsCollection);
+  
+    const newChatRoom = {
+      participants,
+      messages: [],
+    };
+  
+    await setDoc(chatRoomRef, newChatRoom);
+  
+    return chatRoomRef.id;
+  }
 }

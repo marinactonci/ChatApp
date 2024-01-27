@@ -5,7 +5,7 @@ import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzDropDownModule } from "ng-zorro-antd/dropdown";
 import { AuthService } from "../../services/firebaseAuth.service";
 import { onAuthStateChanged } from "firebase/auth";
-import { Router } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import {FirestoreService} from "../../services/firebaseFirestore.service";
 import {NzBadgeModule} from "ng-zorro-antd/badge";
 import {NzEmptyComponent} from "ng-zorro-antd/empty";
@@ -14,7 +14,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "app-header",
   standalone: true,
-  imports: [NzIconModule, NzDrawerModule, NzButtonModule, NzDropDownModule, NzBadgeModule, NzEmptyComponent, CommonModule],
+  imports: [NzIconModule, NzDrawerModule, NzButtonModule, NzDropDownModule, NzBadgeModule, NzEmptyComponent, CommonModule, RouterModule],
   providers: [AuthService, FirestoreService],
   templateUrl: "./header.component.html",
 })
