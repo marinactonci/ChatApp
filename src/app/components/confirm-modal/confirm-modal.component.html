@@ -1,0 +1,36 @@
+<button nz-button nzType="primary" nzDanger (click)="showModal()">
+  Delete
+</button>
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Account deletion confirmation"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  nzOkDanger
+>
+  <ng-container *nzModalContent>
+    <form>
+      <label class="text-sm font-medium text-gray-700"> Old Password </label>
+      <nz-input-group [nzSuffix]="suffixTemplate">
+        <input
+          [type]="passwordVisible ? 'text' : 'password'"
+          nz-input
+          placeholder="Enter password..."
+          name="password"
+          [(ngModel)]="password"
+        />
+      </nz-input-group>
+      <ng-template #suffixTemplate>
+        <span
+          nz-icon
+          [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+          (click)="passwordVisible = !passwordVisible"
+        ></span>
+      </ng-template>
+    </form>
+    <p>
+      Are you sure you want to delete your account? This action is irreversible
+      and it will delete all of your chat history.
+    </p>
+  </ng-container>
+</nz-modal>

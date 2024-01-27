@@ -1,6 +1,7 @@
 import { app } from './firebaseConfig.service';
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -23,7 +24,6 @@ export class FirestoreService {
     const newUser = {
       displayName: user.displayName,
       email: user.email,
-      photoURL: user.photoURL ? user.photoURL : '/assets/default-profile.png',
       friends: [],
       friendRequests: [],
     };
@@ -82,5 +82,15 @@ export class FirestoreService {
     }
 
     return users;
+  }
+
+  async updateUser(userId: string, data: any) {
+    const docRef = doc(this.usersCollection, userId);
+    await setDoc(docRef, data, { merge: true });
+  }
+
+  async deleteUser(userId: string) {
+    const docRef = doc(this.usersCollection, userId);
+    await deleteDoc(docRef);
   }
 }

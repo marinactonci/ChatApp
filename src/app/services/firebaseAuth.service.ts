@@ -12,6 +12,9 @@ import {
   sendPasswordResetEmail,
   browserSessionPersistence,
   browserLocalPersistence,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
 } from 'firebase/auth';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { inject } from '@angular/core';
@@ -40,7 +43,7 @@ export class AuthService {
         });
       }
       this.message.create('success', 'Login successful!');
-      this.router.navigateByUrl('/').then((r) => console.log(r));
+      this.router.navigate(['/']);
     } catch {
       this.message.create('error', 'Login failed!', {
         nzDuration: 10000,
@@ -57,7 +60,7 @@ export class AuthService {
       }
       await signInWithEmailAndPassword(this.auth, email, password);
       this.message.create('success', 'Login successful!');
-      this.router.navigateByUrl('/').then((r) => console.log(r));
+      this.router.navigate(['/']);
     } catch {
       this.message.create('error', 'Wrong email or password!');
     }
@@ -67,7 +70,7 @@ export class AuthService {
     try {
       await signOut(this.auth);
       this.message.create('success', 'Logout successful!');
-      this.router.navigateByUrl('/login').then((r) => console.log(r));
+      this.router.navigate(['/login']);
     } catch {
       this.message.create('error', 'Logout failed!');
     }
@@ -86,11 +89,11 @@ export class AuthService {
       }
       if (user.photoURL === null) {
         await updateProfile(user, {
-          photoURL: '/assets/default-profile.png',
+          photoURL: 'assets/default-profile.jpeg',
         });
       }
       await this.firestore.addToUserCollection(user);
-      this.router.navigateByUrl('/').then((r) => console.log(r));
+      this.router.navigate(['/']);
       this.message.create('success', 'Successfully registered!');
     } catch (error) {
       // @ts-ignore
@@ -121,6 +124,65 @@ export class AuthService {
         // @ts-ignore
         this.message.create('error', error?.message);
       }
+    }
+  }
+
+  async changeDisplayName(displayName: string) {
+    try {
+      const user = this.auth.currentUser;
+      if (user) {
+        await updateProfile(user, { displayName });
+        await this.firestore.updateUser(user.uid, { displayName });
+        this.message.create('success', 'Display name changed!');
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      this.message.create('error', error.message ? error.message : error);
+      return false;
+    }
+  }
+
+  async changePassword(oldPassword: string, newPassword: string) {
+    try {
+      const user = this.auth.currentUser;
+      if (user) {
+        if (user.email !== null) {
+          const credential = EmailAuthProvider.credential(
+            user.email,
+            oldPassword
+          );
+          await reauthenticateWithCredential(user, credential);
+          await updatePassword(user, newPassword);
+          this.message.create('success', 'Password changed!');
+          return true;
+        }
+      }
+      return false;
+    } catch (error: any) {
+      this.message.create('error', error.message ? error.message : error);
+      return false;
+    }
+  }
+
+  async deleteAccount(password: string) {
+    try {
+      const user = this.auth.currentUser;
+      if (user) {
+        if (user.email !== null) {
+          const credential = EmailAuthProvider.credential(user.email, password);
+          await reauthenticateWithCredential(user, credential);
+          await this.firestore.deleteUser(user.uid);
+          await user.delete();
+          this.message.create('success', 'Account deleted!');
+          this.router.navigate(['/register']);
+          return true;
+        }
+      }
+      return false;
+    } catch (error: any) {
+      this.message.create('error', 'Wrong password!');
+      return false;
     }
   }
 }

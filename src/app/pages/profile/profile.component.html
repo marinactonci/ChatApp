@@ -1,1 +1,75 @@
-<p>profile works!</p>
+<section class="container mx-auto min-h-[93vh] py-20">
+  @if(!isLoggedIn) {
+  <div class="h-max grid place-items-center">
+    <div class="flex flex-col items-center justify-center gap-3">
+      <p class="text-xl">You have to be signed in to view this page</p>
+      <button nz-button nzType="primary" (click)="navigateTo('/login')">
+        Log In
+      </button>
+    </div>
+  </div>
+  } @else {
+  <h1 class="text-2xl font-medium">User Settings</h1>
+  <div class="flex flex-col gap-6 mt-5">
+    <div class="flex justify-between items-center pb-3 border-b">
+      <div class="flex flex-col gap-2 max-w-2xl">
+        <label>Display name</label>
+        <div class="flex flex-row items-center gap-2">
+          <span nz-icon nzType="user" nzTheme="outline"></span>
+          <p class="text-lg">{{ user.displayName }}</p>
+        </div>
+      </div>
+      @if(provider == 'password') {
+      <app-change-name></app-change-name>
+      }
+    </div>
+    <div class="flex justify-between items-center pb-3 border-b">
+      <div class="flex flex-col gap-2 max-w-2xl">
+        <label>Email</label>
+        <div class="flex flex-row items-center gap-2">
+          <span nz-icon nzType="mail" nzTheme="outline"></span>
+          <p class="text-lg">{{ user.email }}</p>
+        </div>
+      </div>
+    </div>
+    @if (provider == 'password') {
+    <div class="flex justify-between items-center pb-3 border-b">
+      <div class="flex flex-col gap-2 max-w-2xl">
+        <label>Password</label>
+        <div class="flex flex-row items-center gap-2">
+          <span nz-icon nzType="lock" nzTheme="outline"></span>
+          <p class="text-lg">Change your account password</p>
+        </div>
+      </div>
+      <app-change-password></app-change-password>
+    </div>
+    }
+    <div class="flex justify-between items-center pb-3 border-b">
+      <div class="flex flex-col gap-2 max-w-2xl">
+        <label>Log out</label>
+        <div class="flex flex-row items-center gap-2">
+          <span nz-icon nzType="logout" nzTheme="outline"></span>
+          <p class="text-lg">
+            Log out on from this account. You will be redirected to the login
+            page.
+          </p>
+        </div>
+      </div>
+      <button nz-button nzType="primary" (click)="logout()">Log out</button>
+    </div>
+    <div class="flex justify-between items-center">
+      <div class="flex flex-col gap-2">
+        <label>Delete account</label>
+        <div class="flex flex-row items-center gap-2">
+          <span nz-icon nzType="delete" nzTheme="outline"></span>
+          <p class="text-lg">
+            Permanently delete your account. You will be asked for confirmation
+            before deletion proceeds.
+          </p>
+        </div>
+      </div>
+      <app-confirm-modal></app-confirm-modal>
+    </div>
+  </div>
+  }
+</section>

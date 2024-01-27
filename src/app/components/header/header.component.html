@@ -1,78 +1,79 @@
 <header class="flex h-[7vh] items-center justify-between border-b px-8">
-    <div class="flex items-center gap-1">
-        <span
-            class="text-2xl font-bold transition-colors hover:cursor-pointer hover:text-gray-600"
-            >ChatApp</span
-        >
-    </div>
-    @if(!isLoggedIn) {
-    <a href="/login">
-        <button nz-button nzType="primary" nzSize="large">Login</button>
-    </a>
-    } @else {
-      <div class="flex items-center gap-12">
-        <nz-badge [nzCount]="notifications.length" nzSize="small" [nzOffset]="[-6, 6]">
-          <button
-            nz-button
-            nzType="text"
-            class="overflow-hidden"
-            nz-dropdown
-            [nzPlacement]="'bottomRight'"
-            [nzDropdownMenu]="notifs"
-            nzTrigger="click">
-            <span nz-icon nzType="bell" nzTheme="outline" class="text-xl"></span>
-          </button>
-        </nz-badge>
-        <nz-dropdown-menu #notifs="nzDropdownMenu">
-          <ul nz-menu>
-            @if(notifications.length > 0) {
-              @for(notification of notifications; track $index) {
-                <li nz-menu-item>
-                  <div class="flex justify-between items-center">
-                    <div>
-                      {{notification.from}} has sent you a friend request
-                    </div>
-                    <div class="flex items-center gap-3">
-                      <button>A</button>
-                      <button>D</button>
-                    </div>
-                  </div>
-                </li>
-              }
-            } @else {
-              <nz-empty [nzNotFoundContent]="contentTpl"></nz-empty>
-              <ng-template #contentTpl>
-              <span>
-                No notifications
-              </span>
-              </ng-template>
-            }
-          </ul>
-        </nz-dropdown-menu>
-        <img
-          src="{{ user.photoURL ? user.photoURL : 'assets/default-profile.jpeg' }}"
-          alt="user"
-          class="w-10 h-10 rounded-full hover:cursor-pointer"
-          nz-dropdown
-          [nzDropdownMenu]="menu"
-          nzTrigger="click"
-        />
-        <nz-dropdown-menu #menu="nzDropdownMenu">
-          <ul nz-menu>
-            <li nz-menu-item >
-              <div class="flex items-center gap-2">
-                <span nz-icon nzType="user" nzTheme="outline"></span>
-                <span>{{ user.displayName }}</span>
-              </div>
-            </li>
-            <li nz-menu-item (click)="handleLogout()">
-              <div class="flex items-center gap-2">
-                <span nz-icon nzType="logout" nzTheme="outline"></span>
-                <span>Sign-out</span>
-              </div>
-            </li>
-          </ul>
-        </nz-dropdown-menu>
-      </div>
-    }
+  <div class="flex items-center gap-1">
+    <span
+      class="text-2xl font-bold transition-colors hover:cursor-pointer hover:text-gray-600"
+      (click)="navigateTo('/')"
+      >ChatApp</span
+    >
+  </div>
+  @if(!isLoggedIn) {
+  <a href="/login">
+    <button nz-button nzType="primary" nzSize="large">Login</button>
+  </a>
+  } @else {
+  <div class="flex items-center gap-12">
+    <nz-badge
+      [nzCount]="notifications.length"
+      nzSize="small"
+      [nzOffset]="[-6, 6]"
+    >
+      <button
+        nz-button
+        nzType="text"
+        class="overflow-hidden"
+        nz-dropdown
+        [nzPlacement]="'bottomRight'"
+        [nzDropdownMenu]="notifs"
+        nzTrigger="click"
+      >
+        <span nz-icon nzType="bell" nzTheme="outline" class="text-xl"></span>
+      </button>
+    </nz-badge>
+    <nz-dropdown-menu #notifs="nzDropdownMenu">
+      <ul nz-menu>
+        @if(notifications.length > 0) { @for(notification of notifications;
+        track $index) {
+        <li nz-menu-item>
+          <div class="flex items-center justify-between">
+            <div>{{ notification.from }} has sent you a friend request</div>
+            <div class="flex items-center gap-3">
+              <button>A</button>
+              <button>D</button>
+            </div>
+          </div>
+        </li>
+        } } @else {
+        <nz-empty [nzNotFoundContent]="contentTpl"></nz-empty>
+        <ng-template #contentTpl>
+          <span> No notifications </span>
+        </ng-template>
+        }
+      </ul>
+    </nz-dropdown-menu>
+    <img
+      [src]="user.photoURL"
+      alt="user"
+      class="h-10 w-10 rounded-full hover:cursor-pointer"
+      nz-dropdown
+      [nzDropdownMenu]="menu"
+      nzTrigger="click"
+    />
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item (click)="navigateTo('/profile')">
+          <div class="flex items-center gap-2">
+            <span nz-icon nzType="user" nzTheme="outline"></span>
+            <span>{{ user.displayName }}</span>
+          </div>
+        </li>
+        <li nz-menu-item (click)="handleLogout()">
+          <div class="flex items-center gap-2">
+            <span nz-icon nzType="logout" nzTheme="outline"></span>
+            <span>Sign-out</span>
+          </div>
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+  </div>
+  }
 </header>

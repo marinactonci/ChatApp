@@ -1,0 +1,23 @@
+<button nz-button nzType="primary" (click)="showModal()">Change</button>
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Change your display name"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+>
+  <ng-container *nzModalContent>
+    <form class="space-y-6">
+      <div>
+        <label class="text-sm font-medium text-gray-700">
+          New display name
+        </label>
+        <input
+          type="text"
+          nz-input
+          name="displayName"
+          [(ngModel)]="displayName"
+        />
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>
