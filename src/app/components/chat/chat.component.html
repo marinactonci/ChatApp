@@ -13,6 +13,7 @@
         </div>
         <div class="chat-bubble custom-bubble text-white">{{ message['content'] }}</div>
     </div>
+    
     } @else {
     <div class="chat chat-end p-3">
         <div class="chat-image avatar">
@@ -28,12 +29,19 @@
     </div>
     }
     }
-    <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
+    <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton" [nzPrefix]="uploadImage">
         <input [(ngModel)]="messageContent" type="text" nz-input placeholder="Send a message..."
             (keydown.enter)="sendMessage()" />
     </nz-input-group>
+    <ng-template #uploadImage>
+        <span nz-icon> 
+            <nz-upload nzAction="" [nzFileList]="fileList"
+                (nzChange)="handleChange($event)">
+                <span nz-icon class="mb-1 mr-2" nzType="upload"></span>
+            </nz-upload>
+        </span>
+    </ng-template>
     <ng-template #suffixButton>
-        <button nz-button nzType="primary" nzSearch><span nz-icon nzType="send" (click)="sendMessage()"
-                nzTheme="outline"></span></button>
+        <button nz-button nzSearch><span nz-icon nzType="send" (click)="sendMessage()"></span></button>
     </ng-template>
 </div>
