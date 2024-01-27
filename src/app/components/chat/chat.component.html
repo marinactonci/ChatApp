@@ -1,45 +1,39 @@
-<div class="bg-gray-200">
-    <div class="mb-4 h-64 overflow-y-auto">
-        @for (message of messages; track $index) {
-        @if (message['sender'] !== authService.auth.currentUser?.uid){
-        <div class="chat chat-start p-3">
-            <div class="chat-image avatar">
-                <div class="w-10 rounded-full">
-                    <img alt="Tailwind CSS chat bubble component"
-                    src="{{ message.senderProfilePicture }}" />
-                </div>
+<div class="overflow-y-auto bg-gray-100 w-full">
+    @for (message of messages; track $index) {
+    @if (message['sender'] !== authService.auth.currentUser?.uid){
+    <div class="chat chat-start p-3">
+        <div class="chat-image avatar">
+            <div class="w-10 rounded-full">
+                <img alt="Tailwind CSS chat bubble component" src="{{ message.senderProfilePicture }}" />
             </div>
-            <div class="chat-header">
-                {{ message.senderDisplayName }}
-                <time class="text-xs opacity-50">{{ message['timestamp'].toDate() | date:'HH:mm:ss' }}</time>
-            </div>
-            <div class="chat-bubble custom-bubble text-white">{{ message['content'] }}</div>
         </div>
-        } @else {
-        <div class="chat chat-end p-3">
-            <div class="chat-image avatar">
-                <div class="w-10 rounded-full">
-                    <img alt="Tailwind CSS chat bubble component"
-                    src="{{ authService.auth.currentUser?.photoURL }}" />
-                </div>
-            </div>
-            <div class="chat-header">
-                {{ message.senderDisplayName }}
-                <time class="text-xs opacity-50">{{ message['timestamp'].toDate() | date:'HH:mm:ss' }}</time>
-            </div>
-            <div class="chat-bubble text-white">{{ message['content'] }}</div>
+        <div class="chat-header">
+            {{ message.senderDisplayName }}
+            <time class="text-xs opacity-50">{{ message['timestamp'].toDate() | date:'HH:mm:ss' }}</time>
         </div>
-        }
-        }
+        <div class="chat-bubble custom-bubble text-white">{{ message['content'] }}</div>
     </div>
-    <div class="flex">
-        <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
-            <input [(ngModel)]="messageContent" type="text" nz-input placeholder="Send a message..."
-                (keydown.enter)="sendMessage()" />
-        </nz-input-group>
-        <ng-template #suffixButton>
-            <button nz-button nzType="primary" nzSearch><span nz-icon nzType="send" (click)="sendMessage()"
-                    nzTheme="outline"></span></button>
-        </ng-template>
+    } @else {
+    <div class="chat chat-end p-3">
+        <div class="chat-image avatar">
+            <div class="w-10 rounded-full">
+                <img alt="Tailwind CSS chat bubble component" src="{{ authService.auth.currentUser?.photoURL }}" />
+            </div>
+        </div>
+        <div class="chat-header">
+            {{ message.senderDisplayName }}
+            <time class="text-xs opacity-50">{{ message['timestamp'].toDate() | date:'HH:mm:ss' }}</time>
+        </div>
+        <div class="chat-bubble text-white">{{ message['content'] }}</div>
     </div>
+    }
+    }
+    <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
+        <input [(ngModel)]="messageContent" type="text" nz-input placeholder="Send a message..."
+            (keydown.enter)="sendMessage()" />
+    </nz-input-group>
+    <ng-template #suffixButton>
+        <button nz-button nzType="primary" nzSearch><span nz-icon nzType="send" (click)="sendMessage()"
+                nzTheme="outline"></span></button>
+    </ng-template>
 </div>

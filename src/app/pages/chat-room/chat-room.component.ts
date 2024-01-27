@@ -6,8 +6,7 @@ import { ChatComponent } from '../../components/chat/chat.component';
   selector: 'app-chat-room',
   standalone: true,
   imports: [SidebarComponent, ChatComponent],
-  templateUrl: './chat-room.component.html',
-  styleUrl: './chat-room.component.css'
+  templateUrl: './chat-room.component.html'
 })
 export class ChatRoomComponent {
 

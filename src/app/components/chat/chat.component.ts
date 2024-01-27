@@ -26,7 +26,6 @@ export class ChatComponent {
   private firestoreService: FirestoreService = inject(FirestoreService);
   protected authService: AuthService = inject(AuthService);
 
-
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.chatRoomId = params['id'];
