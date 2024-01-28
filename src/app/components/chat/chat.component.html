@@ -23,9 +23,12 @@
         </div>
         <div class="chat-header">
             {{ message.senderDisplayName }}
-            <time class="text-xs opacity-50">{{ message['timestamp'].toDate() | date:'HH:mm:ss' }}</time>
+            <time class="text-xs opacity-50">{{ message['timestamp'].toDate() | date:'HH:mm' }}</time>
         </div>
         <div class="chat-bubble text-white">{{ message['content'] }}</div>
+        <div class="chat-footer opacity-50">
+            {{ message['status'] | titlecase}}
+        </div>
     </div>
     }
     }

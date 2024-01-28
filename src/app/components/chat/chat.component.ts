@@ -49,6 +49,7 @@ export class ChatComponent {
             timestamp: new Date(),
             sender: currentUser.uid,
             content: this.messageContent,
+            status: 'sent'
           };
 
           const chatRoom = await this.firestoreService.getChatRoom(this.chatRoomId);
