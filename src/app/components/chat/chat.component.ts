@@ -25,7 +25,6 @@ export class ChatComponent {
   messages = [];
   messageContent: string = '';
   chatRoomId: string | null = '';
-  hasUpdatedMessageStatus: boolean = false;
 
   @ViewChild('bottom') private bottom: ElementRef;
   @ViewChild('chatContainer') private chatContainer: ElementRef;
@@ -97,7 +96,7 @@ export class ChatComponent {
                 .then((senders) => {
                   this.messages = chatRoomData['messages'].map((message) => {
                     const sender = senders.find((user) => user.uid === message.sender);
-                    return { ...message, senderDisplayName: sender?.displayName || 'Unknown', senderProfilePicture: sender?.photoURL || '../../assets/default-profile.jpeg' };
+                    return { ...message, senderDisplayName: sender?.displayName || 'Unknown', senderProfilePicture: sender?.photoURL || 'https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' };
                   });
                 });
             } else {
@@ -192,10 +191,7 @@ export class ChatComponent {
   }
 
   updateMessageStatusOnInput() {
-    if (!this.hasUpdatedMessageStatus) {
-      this.updateMessageStatus();
-      this.hasUpdatedMessageStatus = true;
-    }
+      this.updateMessageStatus();    
   }
 
   ngOnDestroy() {
