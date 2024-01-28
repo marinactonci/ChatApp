@@ -1,11 +1,11 @@
 export const environment = {
   production: true,
   firebaseConfig: {
-    apiKey: process.env.FIREBASECONFIG_APIKEY,
-    authDomain: process.env.FIREBASECONFIG_AUTHDOMAIN,
-    projectId: process.env.FIREBASECONFIG_PROJECTID,
-    storageBucket: process.env.FIREBASECONFIG_STORAGEBUCKET,
-    messagingSenderId: process.env.FIREBASECONFIG_MESSAGINGSENDERID,
-    appId: process.env.FIREBASECONFIG_APPID,
+    apiKey: 'FIREBASECONFIG_APIKEY',
+    authDomain: 'FIREBASECONFIG_AUTHDOMAIN',
+    projectId: 'FIREBASECONFIG_PROJECTID',
+    storageBucket: 'FIREBASECONFIG_STORAGEBUCKET',
+    messagingSenderId: 'FIREBASECONFIG_MESSAGINGSENDERID',
+    appId: 'FIREBASECONFIG_APPID',
   },
 };
