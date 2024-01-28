@@ -25,7 +25,6 @@ export class ChatComponent {
   messages = [];
   messageContent: string = '';
   chatRoomId: string | null = '';
-  hasUpdatedMessageStatus: boolean = false;
 
   @ViewChild('bottom') private bottom: ElementRef;
   @ViewChild('chatContainer') private chatContainer: ElementRef;
@@ -192,10 +191,7 @@ export class ChatComponent {
   }
 
   updateMessageStatusOnInput() {
-    if (!this.hasUpdatedMessageStatus) {
-      this.updateMessageStatus();
-      this.hasUpdatedMessageStatus = true;
-    }
+      this.updateMessageStatus();    
   }
 
   ngOnDestroy() {
