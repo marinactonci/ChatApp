@@ -1,16 +1,16 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { NzInputModule } from "ng-zorro-antd/input";
-import { NzIconModule } from "ng-zorro-antd/icon";
-import { AuthService } from "../../services/firebaseAuth.service";
-import { Router } from "@angular/router";
-import { NzButtonModule } from "ng-zorro-antd/button";
-import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
-import { onAuthStateChanged } from "firebase/auth";
-import {FirestoreService} from "../../services/firebaseFirestore.service";
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { AuthService } from '../../services/firebaseAuth.service';
+import { Router } from '@angular/router';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { onAuthStateChanged } from 'firebase/auth';
+import { FirestoreService } from '../../services/firebaseFirestore.service';
 
 @Component({
-  selector: "app-login",
+  selector: 'app-login',
   standalone: true,
   imports: [
     NzInputModule,
@@ -20,14 +20,14 @@ import {FirestoreService} from "../../services/firebaseFirestore.service";
     NzCheckboxModule,
   ],
   providers: [AuthService, FirestoreService],
-  templateUrl: "./login.component.html",
+  templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {
   rememberMe = false;
   isDisabled = false;
 
-  email = "";
-  password = "";
+  email = '';
+  password = '';
   passwordVisible = false;
 
   authService = inject(AuthService);
@@ -43,7 +43,9 @@ export class LoginComponent implements OnInit {
     await this.authService.loginWithGoogle();
   }
 
-  handleGithubLogin() {}
+  async handleGithubLogin() {
+    await this.authService.loginWithGithub();
+  }
 
   async handleLogin() {
     await this.authService.login(this.email, this.password, this.rememberMe);

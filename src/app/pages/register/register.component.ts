@@ -1,31 +1,35 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormsModule } from "@angular/forms";
-import { NzButtonModule } from "ng-zorro-antd/button";
-import { NzCheckboxModule} from "ng-zorro-antd/checkbox";
-import { NzIconModule } from "ng-zorro-antd/icon";
-import { NzInputModule } from "ng-zorro-antd/input";
-import { onAuthStateChanged } from "firebase/auth";
-import { AuthService } from "../../services/firebaseAuth.service";
-import { Router } from "@angular/router";
-import {NzMessageService} from "ng-zorro-antd/message";
-import {FirestoreService} from "../../services/firebaseFirestore.service";
+import { FormsModule } from '@angular/forms';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { onAuthStateChanged } from 'firebase/auth';
+import { AuthService } from '../../services/firebaseAuth.service';
+import { Router } from '@angular/router';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { FirestoreService } from '../../services/firebaseFirestore.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
-    NzInputModule, NzIconModule, FormsModule, NzButtonModule, NzCheckboxModule
+    NzInputModule,
+    NzIconModule,
+    FormsModule,
+    NzButtonModule,
+    NzCheckboxModule,
   ],
   providers: [AuthService, FirestoreService],
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
 })
 export class RegisterComponent implements OnInit {
-  email = "";
+  email = '';
 
-  password = "";
+  password = '';
   passwordVisible = false;
 
-  passwordConfirm = "";
+  passwordConfirm = '';
   passwordConfirmVisible = false;
 
   isDisabled = false;
@@ -44,8 +48,8 @@ export class RegisterComponent implements OnInit {
     await this.authService.loginWithGoogle();
   }
 
-  handleGithubLogin() {
-
+  async handleGithubLogin() {
+    await this.authService.loginWithGithub();
   }
 
   async handleRegister() {
@@ -56,5 +60,4 @@ export class RegisterComponent implements OnInit {
 
     await this.authService.register(this.email, this.password);
   }
-
 }

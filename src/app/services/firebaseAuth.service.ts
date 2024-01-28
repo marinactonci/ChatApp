@@ -49,6 +49,27 @@ export class AuthService {
     }
   }
 
+  async loginWithGithub() {
+    try {
+      const provider = new GithubAuthProvider();
+      await signInWithPopup(this.auth, provider);
+      const documentIds = await this.firestore.getAllDocumentIds('users');
+      const currentUser = this.auth.currentUser;
+      if (currentUser) {
+        const currentUserUid = currentUser.uid;
+        if (!documentIds.includes(currentUserUid)) {
+          await this.firestore.addToUserCollection(currentUser);
+        }
+      }
+      this.message.create('success', 'Login successful!');
+      this.router.navigate(['/']);
+    } catch {
+      this.message.create('error', 'Login failed!', {
+        nzDuration: 10000,
+      });
+    }
+  }
+
   async login(email: string, password: string, remember: boolean) {
     try {
       if (remember) {
