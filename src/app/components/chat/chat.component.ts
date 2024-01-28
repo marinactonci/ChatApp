@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -12,19 +12,29 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
 import { onSnapshot, doc } from 'firebase/firestore';
 
-
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, NzInputModule, NzButtonModule, NzIconModule, CommonModule, NzUploadModule],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    NzInputModule,
+    NzButtonModule,
+    NzIconModule,
+    CommonModule,
+    NzUploadModule,
+  ],
   providers: [FirestoreService, AuthService],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.css'
+  styleUrl: './chat.component.css',
 })
 export class ChatComponent {
   messages = [];
-  messageContent: string = ''
+  messageContent: string = '';
   chatRoomId: string | null = '';
+
+  @ViewChild('bottom') private bottom: ElementRef;
+  @ViewChild('chatContainer') private chatContainer: ElementRef;
 
   fileList: NzUploadFile[] = [];
 
@@ -33,7 +43,7 @@ export class ChatComponent {
   protected authService: AuthService = inject(AuthService);
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       this.chatRoomId = params['id'];
       this.loadChatRoomMessages();
     });
@@ -51,10 +61,14 @@ export class ChatComponent {
             content: this.messageContent,
           };
 
-          const chatRoom = await this.firestoreService.getChatRoom(this.chatRoomId);
+          const chatRoom = await this.firestoreService.getChatRoom(
+            this.chatRoomId
+          );
 
           if (chatRoom) {
-            const updatedMessages = Array.isArray(chatRoom.messages) ? [...chatRoom.messages, message] : [message];
+            const updatedMessages = Array.isArray(chatRoom.messages)
+              ? [...chatRoom.messages, message]
+              : [message];
 
             await this.firestoreService.updateChatRoom(this.chatRoomId, {
               messages: updatedMessages,
@@ -69,26 +83,41 @@ export class ChatComponent {
         console.error('Error sending message:', error);
       }
       this.messageContent = '';
-      this.loadChatRoomMessages();
+      await this.loadChatRoomMessages();
+      await this.scrollToBottom();
     }
   }
 
   async loadChatRoomMessages() {
     try {
       if (this.chatRoomId) {
-        const chatRoomRef = doc(this.firestoreService.chatRoomsCollection, this.chatRoomId);
-          onSnapshot(chatRoomRef, (doc) => {
+        const chatRoomRef = doc(
+          this.firestoreService.chatRoomsCollection,
+          this.chatRoomId
+        );
+        onSnapshot(chatRoomRef, (doc) => {
           if (doc.exists()) {
             const chatRoomData = doc.data();
-  
+
             if (Array.isArray(chatRoomData['messages'])) {
-              const senderUids = chatRoomData['messages'].map((message) => message.sender);
-  
-              this.firestoreService.getUsersByUids(senderUids)
+              const senderUids = chatRoomData['messages'].map(
+                (message) => message.sender
+              );
+
+              this.firestoreService
+                .getUsersByUids(senderUids)
                 .then((senders) => {
                   this.messages = chatRoomData['messages'].map((message) => {
-                    const sender = senders.find((user) => user.uid === message.sender);
-                    return { ...message, senderDisplayName: sender?.displayName || 'Unknown', senderProfilePicture: sender?.photoURL || 'https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' };
+                    const sender = senders.find(
+                      (user) => user.uid === message.sender
+                    );
+                    return {
+                      ...message,
+                      senderDisplayName: sender?.displayName || 'Unknown',
+                      senderProfilePicture:
+                        sender?.photoURL ||
+                        'https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg',
+                    };
                   });
                 });
             } else {
@@ -104,14 +133,38 @@ export class ChatComponent {
     }
   }
 
+  scrollToBottom(): void {
+    try {
+      this.bottom.nativeElement.scrollIntoView({ behavior: 'smooth' });
+    } catch (err) {}
+  }
+
+  sendFile(file: File): void {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const message = {
+        content: event.target.result,
+        type: 'file',
+        fileName: file.name,
+        // Add other properties like sender, timestamp, etc.
+      };
+
+      this.messages.push(message);
+      this.scrollToBottom();
+    };
+
+    reader.readAsDataURL(file);
+  }
+
   handleChange(info: NzUploadChangeParam): void {
     let fileList = [...info.fileList];
-    console.log(info.fileList)
+    console.log(info.fileList);
 
     fileList = fileList.slice(-1);
-
+    console.log(fileList);
     // 2. Read from response and show file link
-    fileList = fileList.map(file => {
+    fileList = fileList.map((file) => {
       if (file.response) {
         // Component will show file.url as link
         file.url = file.response.url;
@@ -120,6 +173,9 @@ export class ChatComponent {
     });
 
     this.fileList = fileList;
-  }
 
+    for (const file of fileList) {
+      if (file.status === 'done') this.sendFile(file.originFileObj);
+    }
+  }
 }

@@ -1,46 +1,77 @@
-<div class="overflow-y-auto bg-gray-100 w-full h-80">
-    @for (message of messages; track $index) {
-    @if (message['sender'] !== authService.auth.currentUser?.uid){
-    <div class="chat chat-start p-3">
-        <div class="chat-image avatar">
-            <div class="w-10 rounded-full">
-                <img alt="Tailwind CSS chat bubble component" src="{{ message.senderProfilePicture }}" />
-            </div>
-        </div>
-        <div class="chat-header">
-            {{ message.senderDisplayName }}
-            <time class="text-xs opacity-50">{{ message['timestamp'].toDate() | date:'HH:mm:ss' }}</time>
-        </div>
-        <div class="chat-bubble custom-bubble text-white">{{ message['content'] }}</div>
+<div
+  class="overflow-y-auto bg-gray-100 w-full h-full custom-scrollbar"
+  #chatContainer
+>
+  @for (message of messages; track $index) { @if (message['sender'] !==
+  authService.auth.currentUser?.uid){
+  <div class="chat chat-start p-3">
+    <div class="chat-image avatar">
+      <div class="w-10 rounded-full">
+        <img
+          alt="Tailwind CSS chat bubble component"
+          [src]="message.senderProfilePicture"
+        />
+      </div>
     </div>
-
-    } @else {
-    <div class="chat chat-end p-3">
-        <div class="chat-image avatar">
-            <div class="w-10 rounded-full">
-                <img alt="Tailwind CSS chat bubble component" src="{{ authService.auth.currentUser?.photoURL }}" />
-            </div>
-        </div>
-        <div class="chat-header">
-            {{ message.senderDisplayName }}
-            <time class="text-xs opacity-50">{{ message['timestamp'].toDate() | date:'HH:mm:ss' }}</time>
-        </div>
-        <div class="chat-bubble text-white">{{ message['content'] }}</div>
+    <div class="chat-header">
+      {{ message.senderDisplayName }}
+      <time class="text-xs opacity-50">{{
+        message["timestamp"].toDate() | date : "HH:mm:ss"
+      }}</time>
     </div>
-    }
-    }
+    <div class="chat-bubble custom-bubble text-white break-all">
+      {{ message["content"] }}
+    </div>
+  </div>
+  } @else {
+  <div class="chat chat-end p-3">
+    <div class="chat-image avatar">
+      <div class="w-10 rounded-full">
+        <img
+          alt="Tailwind CSS chat bubble component"
+          [src]="authService.auth.currentUser?.photoURL"
+        />
+      </div>
+    </div>
+    <div class="chat-header">
+      {{ message.senderDisplayName }}
+      <time class="text-xs opacity-50">{{
+        message["timestamp"].toDate() | date : "HH:mm:ss"
+      }}</time>
+    </div>
+    <div class="chat-bubble text-white break-all">{{ message["content"] }}</div>
+  </div>
+  } }
+  <div #bottom></div>
 </div>
-<nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton" [nzPrefix]="uploadImage">
-    <input [(ngModel)]="messageContent" type="text" nz-input placeholder="Send a message..."
-        (keydown.enter)="sendMessage()" />
+
+<nz-input-group
+  nzSearch
+  nzSize="large"
+  [nzAddOnAfter]="suffixButton"
+  [nzPrefix]="uploadImage"
+>
+  <input
+    [(ngModel)]="messageContent"
+    type="text"
+    nz-input
+    placeholder="Send a message..."
+    (keydown.enter)="sendMessage()"
+  />
 </nz-input-group>
 <ng-template #uploadImage>
-    <span nz-icon>
-        <nz-upload nzAction="" [nzFileList]="fileList" (nzChange)="handleChange($event)">
-            <span nz-icon class="mb-1 mr-2" nzType="upload"></span>
-        </nz-upload>
-    </span>
+  <span nz-icon>
+    <nz-upload
+      nzAction=""
+      [nzFileList]="fileList"
+      (nzChange)="handleChange($event)"
+    >
+      <span nz-icon class="mb-1 mr-2" nzType="upload"></span>
+    </nz-upload>
+  </span>
 </ng-template>
 <ng-template #suffixButton>
-    <button nz-button nzSearch><span nz-icon nzType="send" (click)="sendMessage()"></span></button>
+  <button nz-button nzSearch>
+    <span nz-icon nzType="send" (click)="sendMessage()"></span>
+  </button>
 </ng-template>
