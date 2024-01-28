@@ -34,7 +34,7 @@
     }
 </div>
 <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton" [nzPrefix]="uploadImage">
-    <input [(ngModel)]="messageContent" type="text" nz-input placeholder="Send a message..."
+    <input [(ngModel)]="messageContent" (click)="updateMessageStatusOnInput()" type="text" nz-input placeholder="Send a message..."
         (keydown.enter)="sendMessage()" />
 </nz-input-group>
 <ng-template #uploadImage>

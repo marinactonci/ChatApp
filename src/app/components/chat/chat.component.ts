@@ -25,17 +25,20 @@ export class ChatComponent {
   messages = [];
   messageContent: string = ''
   chatRoomId: string | null = '';
+  hasUpdatedMessageStatus: boolean = false;
 
   fileList: NzUploadFile[] = [];
 
   private route: ActivatedRoute = inject(ActivatedRoute);
   private firestoreService: FirestoreService = inject(FirestoreService);
   protected authService: AuthService = inject(AuthService);
+  private chatRoomSubscription: any;
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.chatRoomId = params['id'];
       this.loadChatRoomMessages();
+      this.updateMessageStatus();
     });
   }
 
@@ -70,6 +73,7 @@ export class ChatComponent {
         console.error('Error sending message:', error);
       }
       this.messageContent = '';
+      this.updateMessageStatus();
       this.loadChatRoomMessages();
     }
   }
@@ -78,7 +82,7 @@ export class ChatComponent {
     try {
       if (this.chatRoomId) {
         const chatRoomRef = doc(this.firestoreService.chatRoomsCollection, this.chatRoomId);
-          onSnapshot(chatRoomRef, (doc) => {
+          this.chatRoomSubscription = onSnapshot(chatRoomRef, (doc) => {
           if (doc.exists()) {
             const chatRoomData = doc.data();
   
@@ -123,4 +127,48 @@ export class ChatComponent {
     this.fileList = fileList;
   }
 
+  async updateMessageStatus() {
+    try {
+      if (this.chatRoomId) {
+        const currentUser = this.authService.auth.currentUser;
+
+        if (currentUser) {
+          const chatRoom = await this.firestoreService.getChatRoom(this.chatRoomId);
+
+          if (chatRoom) {
+            const updatedMessages = chatRoom.messages.map((message) => {
+              // Update status to 'read' for messages sent by other user
+              if (message.sender !== currentUser.uid && message.status === 'sent') {
+                return { ...message, status: 'read' };
+              }
+              return message;
+            });
+
+            await this.firestoreService.updateChatRoom(this.chatRoomId, {
+              messages: updatedMessages,
+            });
+          } else {
+            console.error('Chat room not found!');
+          }
+        } else {
+          console.error('Current user not found!');
+        }
+      }
+    } catch (error) {
+      console.error('Error updating message status:', error);
+    }
+  }
+
+  updateMessageStatusOnInput() {
+    if (!this.hasUpdatedMessageStatus) {
+      this.updateMessageStatus();
+      this.hasUpdatedMessageStatus = true;
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.chatRoomSubscription) {
+      this.chatRoomSubscription();
+    }
+  }
 }
