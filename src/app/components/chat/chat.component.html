@@ -13,7 +13,7 @@
     <div class="chat-header">
       {{ message.senderDisplayName }}
       <time class="text-xs opacity-50">{{
-        message["timestamp"].toDate() | date : "HH:mm:ss"
+        message["timestamp"].toDate() | date : "dd.MM.YYYY | HH:mm"
       }}</time>
     </div>
     <div class="chat-bubble custom-bubble text-white break-all max-w-lg">
@@ -34,7 +34,7 @@
     <div class="chat-header">
       {{ message.senderDisplayName }}
       <time class="text-xs opacity-50">{{
-        message["timestamp"].toDate() | date : "HH:mm"
+        message["timestamp"].toDate() | date : "dd.MM.YYYY | HH:mm"
       }}</time>
     </div>
     <div class="chat-bubble text-white break-all max-w-lg">{{ message["content"] }}</div>

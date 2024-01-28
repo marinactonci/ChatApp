@@ -43,6 +43,7 @@ export class FirestoreService {
     const newUser = {
       displayName: user.displayName,
       email: user.email,
+      photoURL: user.photoURL ? user.photoURL : 'assets/default-profile.png',
       friends: [],
       friendRequests: [],
     };

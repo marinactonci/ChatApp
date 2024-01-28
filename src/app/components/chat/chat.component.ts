@@ -97,7 +97,7 @@ export class ChatComponent {
                 .then((senders) => {
                   this.messages = chatRoomData['messages'].map((message) => {
                     const sender = senders.find((user) => user.uid === message.sender);
-                    return { ...message, senderDisplayName: sender?.displayName || 'Unknown', senderProfilePicture: sender?.photoURL || 'https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' };
+                    return { ...message, senderDisplayName: sender?.displayName || 'Unknown', senderProfilePicture: sender?.photoURL || 'assets/default-profile.jpeg' };
                   });
                 });
             } else {

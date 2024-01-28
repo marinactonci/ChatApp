@@ -48,6 +48,4 @@ export class LoginComponent implements OnInit {
   async handleLogin() {
     await this.authService.login(this.email, this.password, this.rememberMe);
   }
-
-  async handleForgotPassword() {}
 }
