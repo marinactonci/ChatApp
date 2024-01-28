@@ -1,5 +1,20 @@
 import { app } from './firebaseConfig.service';
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, query, where, DocumentData, onSnapshot } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  arrayUnion,
+  arrayRemove,
+  query,
+  where,
+  DocumentData,
+  onSnapshot,
+} from 'firebase/firestore';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzConfigService } from 'ng-zorro-antd/core/config';
 import { NzConfig, provideNzConfig } from 'ng-zorro-antd/core/config';
@@ -9,7 +24,7 @@ export class FirestoreService {
   db = getFirestore(app);
   usersCollection = collection(this.db, 'users');
   chatRoomsCollection = collection(this.db, 'chatRooms');
-  
+
   notification = inject(NzNotificationService);
   nzConfigService = inject(NzConfigService);
 
@@ -17,8 +32,9 @@ export class FirestoreService {
     this.nzConfigService.set('notification', { nzMaxStack: 1 });
   }
 
-  async getAllDocumentIds() {
-    const querySnapshot = await getDocs(this.usersCollection);
+  async getAllDocumentIds(collectionName: string) {
+    const collectionRef = collection(this.db, collectionName);
+    const querySnapshot = await getDocs(collectionRef);
     return querySnapshot.docs.map((doc) => doc.id);
   }
 
@@ -33,7 +49,10 @@ export class FirestoreService {
     await setDoc(docRef, newUser);
   }
 
-  async getNotifications(userId: string, callback: (notifications: any[]) => void): Promise<() => void> {
+  async getNotifications(
+    userId: string,
+    callback: (notifications: any[]) => void
+  ): Promise<() => void> {
     const docRef = doc(this.usersCollection, userId);
 
     // Subscribe to real-time updates on the friendRequests field
@@ -48,7 +67,10 @@ export class FirestoreService {
 
         if (senderDocSnap.exists()) {
           const senderData = senderDocSnap.data();
-          const notification = { ...request, senderDisplayName: senderData['displayName'] };
+          const notification = {
+            ...request,
+            senderDisplayName: senderData['displayName'],
+          };
           notifications.push(notification);
 
           // Display the notification when a friend request is received
@@ -66,7 +88,6 @@ export class FirestoreService {
 
     return unsubscribe; // Return the unsubscribe function for cleanup when needed
   }
-  
 
   async getUsers() {
     const usersSnapshot = await getDocs(this.usersCollection);
@@ -125,7 +146,7 @@ export class FirestoreService {
     const userRef = doc(this.usersCollection, receiverId);
 
     await updateDoc(userRef, {
-      friendRequests: arrayUnion({ senderId, status: 'pending' })
+      friendRequests: arrayUnion({ senderId, status: 'pending' }),
     });
   }
 
@@ -134,7 +155,7 @@ export class FirestoreService {
 
     await updateDoc(userRef, {
       friends: arrayUnion(friendId),
-      friendRequests: arrayRemove({ senderId: friendId, status: 'pending' })
+      friendRequests: arrayRemove({ senderId: friendId, status: 'pending' }),
     });
   }
 
@@ -142,7 +163,7 @@ export class FirestoreService {
     const receiverRef = doc(this.usersCollection, receiverId);
 
     await updateDoc(receiverRef, {
-      friendRequests: arrayRemove({ senderId, status: 'pending' })
+      friendRequests: arrayRemove({ senderId, status: 'pending' }),
     });
   }
 
@@ -192,17 +213,18 @@ export class FirestoreService {
     await updateDoc(chatRoomRef, data);
   }
 
-  listenForUsersChanges(callback: (users: DocumentData[]) => void): (() => void) {
+  listenForUsersChanges(callback: (users: DocumentData[]) => void): () => void {
     const usersCollection = collection(this.db, 'users');
 
     // Subscribe to real-time updates on the users collection
     const unsubscribe = onSnapshot(usersCollection, (querySnapshot) => {
-      const users = querySnapshot.docs.map(doc => ({ ...doc.data(), uid: doc.id }));
+      const users = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        uid: doc.id,
+      }));
       callback(users);
     });
 
     return unsubscribe;
   }
-
-
 }

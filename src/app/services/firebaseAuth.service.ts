@@ -32,15 +32,13 @@ export class AuthService {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(this.auth, provider);
-      const documentIds = await this.firestore.getAllDocumentIds();
+      const documentIds = await this.firestore.getAllDocumentIds('users');
       const currentUser = this.auth.currentUser;
       if (currentUser) {
         const currentUserUid = currentUser.uid;
-        documentIds.forEach((documentId: any) => {
-          if (documentId !== currentUserUid) {
-            this.firestore.addToUserCollection(currentUser);
-          }
-        });
+        if (!documentIds.includes(currentUserUid)) {
+          await this.firestore.addToUserCollection(currentUser);
+        }
       }
       this.message.create('success', 'Login successful!');
       this.router.navigate(['/']);
