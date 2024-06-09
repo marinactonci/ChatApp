@@ -1,5 +1,5 @@
-.custom-bubble{
-    background-color: #2a323c6b;
+.custom-bubble {
+  background-color: #2a323c6b;
 }
 
 ::-webkit-scrollbar {
@@ -19,4 +19,88 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.typing-indicator {
+  position: absolute;
+  bottom: 40px; 
+  left: 30px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+  gap: 20px;
+}
+
+.dot-flashing {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #4285F4;
+  color: #4285F4;
+  animation: dot-flashing 1s infinite linear alternate;
+  animation-delay: .5s;
+}
+
+.dot-flashing::before, .dot-flashing::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #4285F4;
+  color: #4285F4;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #4285F4;
+  color: #4285F4;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dot-flashing {
+  0% {
+    background-color: #4285F4;
+  }
+  50%, 100% {
+    background-color: #f0f0f0;
+  }
+}
+
+.chat-bubble-container .respond-button {
+  display: none;
+}
+
+.chat-bubble-container:hover .respond-button {
+  display: block;
+}
+
+.chat-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }

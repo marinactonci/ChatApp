@@ -1,10 +1,10 @@
 <div class="w-full border-r">
-  <div class="p-5">
+  <div class="pl-5 pr-5">
     <input class="mt-2.5 border" placeholder="Search users..." nz-input [(ngModel)]="inputValue"
       (input)="filterUsers()" />
   </div>
 
-  <div class="p-5">
+  <div class="pl-5 pr-5">
     <nz-list nzItemLayout="horizontal" nzHeader="Friends">
       @for (item of filteredFriends; track $index) {
       <nz-list-item class="group/item hover:bg-slate-100 cursor-pointer" (click)="startChat(item['uid'])">
@@ -21,9 +21,9 @@
       }
     </nz-list>
 
-    <nz-list nzItemLayout="horizontal" nzHeader="People you may know">
+    <nz-list nzItemLayout="horizontal" class="h-full" nzHeader="People you may know">
       @for (item of filteredUsers; track $index) {
-      <nz-list-item class="group/item hover:bg-slate-100 cursor-pointer">
+      <nz-list-item class="group/item hover:bg-slate-100 h-100 cursor-pointer">
         <nz-list-item-meta class="ml-3"
           [nzAvatar]="item['photoURL'] ? item['photoURL'] : 'assets/default-profile.jpeg'">
           <nz-list-item-meta-title>
