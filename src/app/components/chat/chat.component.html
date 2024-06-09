@@ -56,22 +56,31 @@
 </div>
 
 <ng-template #suffixButton>
-  <button nz-button nzSearch>
+  <button nz-button nzSearch [disabled]="messageContent.trim() === ''" [ngClass]="{ 'bg-gray-400 cursor-not-allowed': messageContent.trim() === '' }">
     <span nz-icon nzType="send" (click)="sendMessage()"></span>
   </button>
-  <button nz-button class="h-10" (click)="requestAutoResponse()">
+  <button nz-button class="h-10" (click)="requestAutoResponse()" [disabled]="messages.length === 0" [ngClass]="{ 'bg-gray-400 cursor-not-allowed': messages.length === 0 }">
     <span nz-icon nzType="robot"></span> AI Response
   </button>
 </ng-template>
 
 <div class="flex justify-between items-center p-4 bg-white shadow-md">
-  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="sendHashtagRequest()">
+  <button
+    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    (click)="sendHashtagRequest()"
+    [disabled]="messages.length === 0"
+    [ngClass]="{ 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed': messages.length === 0 }"
+  >
     Regenerate Hashtags
   </button>
   <div class="ml-4">
-    <div *ngFor="let hashtag of generatedHashtags" class="inline-block bg-blue-100 text-blue-800 font-semibold mr-2 mb-2 p-2 rounded">
-      {{ hashtag }}
-    </div>
+    <ng-container *ngIf="messages.length > 0; else noMessages">
+      <div *ngFor="let hashtag of generatedHashtags" class="inline-block bg-blue-100 text-blue-800 font-semibold mr-2 mb-2 p-2 rounded">
+        {{ hashtag }}
+      </div>
+    </ng-container>
+    <ng-template #noMessages>
+      <p class="text-gray-500">Hashtags will be generated here.</p>
+    </ng-template>
   </div>
 </div>
-
