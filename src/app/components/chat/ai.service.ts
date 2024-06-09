@@ -9,7 +9,7 @@ import { catchError } from 'rxjs/operators';
 export class AIService {
   //private apiUrl = 'http://localhost:1337';
   //private apiUrl = 'http://hashtag-generator.crabdance.com:1337';
-  private apiUrl = 'https://6272-141-136-156-31.ngrok-free.app';
+  private apiUrl = 'https://2ecd-141-136-156-31.ngrok-free.app';
 
   constructor(private http: HttpClient) {}
 
