@@ -64,7 +64,7 @@ def auto_respond():
     # Tokeniziranje prompta
     inputs = tokenizer_tiny_llama.encode(prompt + tokenizer_tiny_llama.eos_token, return_tensors='pt')
     # Generiranje odgovora pomoću modela
-    outputs = model_tiny_llama.generate(inputs, max_length=100, pad_token_id=tokenizer_tiny_llama.eos_token_id)
+    outputs = model_tiny_llama.generate(inputs, max_length=1000, pad_token_id=tokenizer_tiny_llama.eos_token_id)
 
     # Dekodiranje odgovora
     response_text = tokenizer_tiny_llama.decode(outputs[0], skip_special_tokens=True)

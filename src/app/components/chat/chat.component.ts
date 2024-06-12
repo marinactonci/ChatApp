@@ -72,7 +72,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       this.aiService.generateHashtagsLLM(text).subscribe(response => {
         if (response) {
-          this.generatedHashtags = response.tags.slice(0, 10);
+          this.generatedHashtags = response.tags;
         }
       }, error => {
         console.error('Error sending hashtag request:', error);
