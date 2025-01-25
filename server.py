@@ -195,3 +195,48 @@ def auto_respond():
 if __name__ == '__main__':
     from waitress import serve  
     serve(app, host="0.0.0.0", port=1337)
+
+
+"""
+Sigurnosne mjere implementirane:
+
+1. Ograničavanje brzine zahtjeva (Rate Limiting)
+   - Sprječava previše zahtjeva u kratkom vremenu (npr. 5 odgovora/minutu) 
+   - Kako bi se spriječila zloupotreba i DDoS napadi
+
+2. Provjera valjanosti unosa (Input Validation & Sanitization)
+   - Provjerava format i duljinu korisničkog unosa (maks. 1000 znakova)
+   - Blokira neispravne zahtjeve
+   - Čisti ulazne podatke od potencijalno štetnih znakova
+
+3. Čišćenje izlaznih podataka (Output Sanitization)
+   - Uklanja specijalne znakove i HTML kod iz odgovora
+   - Sprječava XSS napade (npr. pretvaranje & u &amp;)
+   - Ograničava duljinu izlaznih podataka
+
+4. Moderacija sadržaja (Content Moderation)
+   - Automatski detektira toksične poruke pomoću AI modela
+   - Blokira neprikladne odgovore
+
+5. Enkripcija podataka
+   - Koristi HTTPS za sigurnu komunikaciju
+
+6. Sigurniji prompt
+   - Eksplicitne upute modelu da izbjegava štetne odgovore
+   - Ograničava model na kratke, koncizne odgovore
+
+7. Logiranje
+   - Evidentira sve sumnjive aktivnosti
+   - Bilježi pogreške za kasniju analizu
+   - Omogućuje praćenje potencijalnih napada
+
+8. Granice duljine odgovora
+   - Ograničava odgovore na 150-500 znakova
+   - Smanjuje rizik od generiranja neželjenog sadržaja
+   - Poboljšava performanse sustava
+
+9. SQL Injection detekcija
+   - Detektira poznate SQL injection pattern-e
+   - Blokira zahtjeve sa sumnjivim SQL sintaksama
+   - Koristi regex pattern matching za detekciju
+"""
